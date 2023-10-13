@@ -45,7 +45,7 @@ export default function CreateGroup() {
       </Backdrop>
       <Card
         sx={{
-          maxWidth: 400,
+          maxWidth: 600,
         }}
       >
         <CardHeader title="Create group" />
