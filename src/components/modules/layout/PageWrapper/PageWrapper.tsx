@@ -1,12 +1,10 @@
 import styled from "@emotion/styled";
+import { type CommonProps } from "@mui/material/OverridableComponent";
 
 const Content = styled.div`
   flex: 1;
 `;
 
-interface PageWrapperProps {
-  className?: string;
-}
-export const PageWrapper: React.CFC<PageWrapperProps> = ({ children }) => {
-  return <Content>{children}</Content>;
+export const PageWrapper: React.CFC<CommonProps> = ({ children, ...props }) => {
+  return <Content {...props}>{children}</Content>;
 };

@@ -1,7 +1,6 @@
 import React from "react";
 import { Header } from "../Header/Header";
 import styled from "@emotion/styled";
-import { css } from "@emotion/react";
 
 interface LayoutProps {
   children?: React.ReactNode;
