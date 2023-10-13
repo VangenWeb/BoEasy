@@ -5,6 +5,8 @@ import { type AppType } from "next/app";
 import { api } from "~/utils/api";
 
 import "~/styles/globals.css";
+import { Layout } from "~/components/modules";
+import ThemeRegistry from "~/theme/ThemeRegistry";
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
@@ -12,7 +14,11 @@ const MyApp: AppType<{ session: Session | null }> = ({
 }) => {
   return (
     <SessionProvider session={session}>
-      <Component {...pageProps} />
+      <ThemeRegistry>
+        <Layout>
+          <Component {...pageProps} />
+        </Layout>
+      </ThemeRegistry>
     </SessionProvider>
   );
 };
