@@ -1,10 +1,14 @@
 import { Button, CircularProgress } from "@mui/material";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/router";
 import { PageWrapper } from "~/components";
+import { potentialErrorHandling } from "~/util/potentialErrorHandling";
 import { api } from "~/utils/api";
 
 export default function Home() {
   const session = useSession();
+  const router = useRouter();
+
   const { data: groupData } = api.group.getUserGroups.useQuery(
     session.data?.user.id ?? "",
     {
@@ -30,6 +34,9 @@ export default function Home() {
           color="primary"
           sx={{
             mt: 2,
+          }}
+          onClick={() => {
+            router.push("/group/create").catch(potentialErrorHandling);
           }}
         >
           Create Group
