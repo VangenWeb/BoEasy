@@ -3,12 +3,13 @@ import { Logout } from "@mui/icons-material";
 import { AppBar, Box, IconButton, Toolbar, useTheme } from "@mui/material";
 import { signOut, useSession } from "next-auth/react";
 import { Component } from "react";
+import { potentialErrorHandling } from "~/util/potentialErrorHandling";
 
 export const Header: React.FC = () => {
   const theme = useTheme();
   const session = useSession();
   function handleSignOut() {
-    const loggedOut = signOut();
+    signOut().catch(potentialErrorHandling);
   }
 
   const SiteName = styled.div`
@@ -17,6 +18,7 @@ export const Header: React.FC = () => {
     font-weight: 500;
     color: white;
   `;
+
   return (
     <AppBar
       position="static"

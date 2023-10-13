@@ -5,17 +5,14 @@ import { api } from "~/utils/api";
 
 export default function Home() {
   const session = useSession();
-  const { data } = api.group.getUserGroups.useQuery(
+  const { data: groupData } = api.group.getUserGroups.useQuery(
     session.data?.user.id ?? "",
     {
       enabled: !!session.data?.user?.id,
     },
   );
 
-  console.log(session.data?.user.id);
-  console.log(data);
-
-  if (!data) {
+  if (!groupData) {
     return (
       <PageWrapper>
         <CircularProgress />;
@@ -23,7 +20,7 @@ export default function Home() {
     );
   }
 
-  if (data.length === 0) {
+  if (groupData.length === 0) {
     return (
       <PageWrapper>
         <div>You have no groups</div>
@@ -44,7 +41,7 @@ export default function Home() {
   return (
     <PageWrapper>
       HOME
-      {data?.map((group) => {
+      {groupData?.map((group) => {
         return <div key={group.id}>{group.name}</div>;
       })}
     </PageWrapper>

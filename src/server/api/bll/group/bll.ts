@@ -1,5 +1,5 @@
 import { prisma } from "~/server/db";
-import { CreateGroupInput } from "./types";
+import { type CreateGroupInput } from "./types";
 
 export async function getUserGroups(userId: string) {
   const groups = await prisma.group.findMany({
