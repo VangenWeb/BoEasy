@@ -56,6 +56,7 @@ model User {
   accounts      Account[]
   sessions      Session[]
   groups        Group[]
+  tasks         Task[]
 }
 
 model VerificationToken {
@@ -72,4 +73,20 @@ model Group {
   updatedAt DateTime @updatedAt
   name      String
   users     User[]
+  tasks     Task[]
+}
+
+model Task {
+  id            String   @id @default(cuid())
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  expires       DateTime
+  periodically  String?
+  name          String
+  group         Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  groupId       String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId        String
+  completed     Boolean  @default(false)
+  seenByUser    Boolean  @default(false)
 }
