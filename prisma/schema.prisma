@@ -48,15 +48,18 @@ model Session {
 }
 
 model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime?
-  image         String?
-  accounts      Account[]
-  sessions      Session[]
-  groups        Group[]
-  tasks         Task[]
+  id                    String    @id @default(cuid())
+  name                  String?
+  email                 String?   @unique
+  emailVerified         DateTime?
+  image                 String?
+  accounts              Account[]
+  sessions              Session[]
+  groups                Group[]
+  tasks                 Task[]
+  periodicTasks         PeriodicTask[]
+  createdTasks          Task[]    @relation("createdByUser")
+  createdPeriodicTasks  PeriodicTask[]    @relation("createdByUser")
 }
 
 model VerificationToken {
@@ -74,19 +77,38 @@ model Group {
   name      String
   users     User[]
   tasks     Task[]
+  periodicTasks PeriodicTask[]
 }
 
 model Task {
+  id              String   @id @default(cuid())
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  name            String
+  description     String? 
+  expires         DateTime
+  periodically    String?
+  completed       Boolean  @default(false)
+  seenByUser      Boolean  @default(false)
+  group           Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  groupId         String
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId          String
+  createdBy       User    @relation("createdByUser", fields: [createdById], references: [id], onDelete: Cascade)
+  createdById     String
+}
+
+model PeriodicTask {
   id            String   @id @default(cuid())
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
-  expires       DateTime
-  periodically  String?
   name          String
+  description   String? 
+  repeats       String
   group         Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
   groupId       String
-  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  users         User[]     
   userId        String
-  completed     Boolean  @default(false)
-  seenByUser    Boolean  @default(false)
+  createdBy     User    @relation("createdByUser", fields: [createdById], references: [id], onDelete: Cascade)
+  createdById   String
 }

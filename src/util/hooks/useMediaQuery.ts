@@ -1,4 +1,4 @@
-// This is a hook I copy pasted from a previous project I worked on. Its original use were for styled-components themes, but it does translate quite well.
+// This is a hook I created for a previous project I worked on. Its original use were for styled-components themes, I'm fairly sure it translates.
 // I think, I haven't used MUI or Emotion before.
 
 import { useCallback, useLayoutEffect, useState } from "react";
