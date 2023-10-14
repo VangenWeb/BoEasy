@@ -27,5 +27,43 @@ export async function createGroup(input: CreateGroupInput) {
     },
   });
 
+  if (!group) {
+    throw new Error("Group not created");
+  }
+
+  return group;
+}
+
+export async function createPrimaryGroup(input: CreateGroupInput) {
+  const { name, creator } = input;
+
+  const group = await prisma.group.create({
+    data: {
+      name: name,
+      users: {
+        connect: {
+          id: creator,
+        },
+      },
+    },
+  });
+
+  if (!group) {
+    throw new Error("Group not created");
+  }
+
+  await prisma.user.update({
+    where: {
+      id: creator,
+    },
+    data: {
+      primaryGroup: {
+        connect: {
+          id: group.id,
+        },
+      },
+    },
+  });
+
   return group;
 }

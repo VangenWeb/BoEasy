@@ -55,6 +55,8 @@ model User {
   image                 String?
   accounts              Account[]
   sessions              Session[]
+  primaryGroup          Group?    @relation("primaryGroup", fields: [primaryGroupId], references: [id], onDelete: Cascade)
+  primaryGroupId        String?
   groups                Group[]
   tasks                 Task[]
   periodicTasks         PeriodicTask[]
@@ -78,6 +80,7 @@ model Group {
   users     User[]
   tasks     Task[]
   periodicTasks PeriodicTask[]
+  primaryUsers User[] @relation("primaryGroup")
 }
 
 model Task {

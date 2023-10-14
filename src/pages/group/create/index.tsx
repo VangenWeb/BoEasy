@@ -25,7 +25,7 @@ export default function CreateGroup() {
   const router = useRouter();
   const [groupName, setGroupName] = useState("");
 
-  const { mutate, isLoading } = api.group.createGroup.useMutation({
+  const { mutate, isLoading } = api.group.createPrimaryGroup.useMutation({
     onSuccess: () => {
       router.push("/home").catch((err) => console.error(err));
     },
@@ -38,6 +38,7 @@ export default function CreateGroup() {
       });
     }
   }
+
   return (
     <PageWrapper>
       <Backdrop open={isLoading}>
@@ -60,18 +61,16 @@ export default function CreateGroup() {
           />
         </CardContent>
         <CardActionArea>
-          <CardActions>
-            <Button
-              onClick={handleCreateGroup}
-              sx={{
-                width: "100%",
-              }}
-              variant="contained"
-              color="primary"
-            >
-              Create
-            </Button>
-          </CardActions>
+          <Button
+            onClick={handleCreateGroup}
+            sx={{
+              width: "100%",
+            }}
+            variant="contained"
+            color="primary"
+          >
+            Create
+          </Button>
         </CardActionArea>
       </Card>
     </PageWrapper>

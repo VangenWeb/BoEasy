@@ -1,5 +1,5 @@
 import { prisma } from "~/server/db";
-import { CreatePeriodicTaskInput, type CreateTaskInput } from "./types";
+import { type CreatePeriodicTaskInput, type CreateTaskInput } from "./types";
 
 export async function createTask(input: CreateTaskInput) {
   console.log("promp");

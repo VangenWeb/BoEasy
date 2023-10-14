@@ -9,7 +9,7 @@ export default function Home() {
   const session = useSession();
   const router = useRouter();
 
-  const { data: groupData } = api.group.getUserGroups.useQuery(
+  const { data: groupData } = api.user.getUserPrimaryGroup.useQuery(
     session.data?.user.id ?? "",
     {
       enabled: !!session.data?.user?.id,
@@ -24,7 +24,7 @@ export default function Home() {
     );
   }
 
-  if (groupData.length === 0) {
+  if (!groupData.group) {
     return (
       <PageWrapper>
         <div>You have no groups</div>
@@ -44,13 +44,11 @@ export default function Home() {
       </PageWrapper>
     );
   }
+  const { group } = groupData;
 
   return (
     <PageWrapper>
-      HOME
-      {groupData?.map((group) => {
-        return <div key={group.id}>{group.name}</div>;
-      })}
+      <div key={group.id}>{group.name}</div>;
     </PageWrapper>
   );
 }
