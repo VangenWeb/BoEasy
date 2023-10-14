@@ -91,6 +91,7 @@ model Task {
   description     String? 
   expires         DateTime
   periodically    String?
+  period          DateTime?
   completed       Boolean  @default(false)
   seenByUser      Boolean  @default(false)
   group           Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
