@@ -26,8 +26,13 @@ export const Header: React.FC = () => {
         gridArea: "header",
       }}
     >
-      <Toolbar>
-        <SiteName>Chorzy</SiteName>
+      <Toolbar
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+        }}
+      >
+        <SiteName>EasyBo</SiteName>
         {session.status === "authenticated" && (
           <IconButton
             sx={{

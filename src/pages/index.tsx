@@ -6,7 +6,7 @@ export default function Home() {
     <>
       <Head>
         <title>Vange Web</title>
-        <meta name="description" content="Firm website for Andreas Vangen" />
+        <meta name="description" content="Playground Simple Borettslag App" />
         <link rel="icon" href="/vwulog.ico" />
       </Head>
       <PageWrapper>

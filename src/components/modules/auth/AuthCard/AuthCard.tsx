@@ -40,6 +40,9 @@ export const AuthCard: React.FC = ({}) => {
           <Button variant="outlined" onClick={handleLogin}>
             Log in
           </Button>
+          <Button variant="outlined" onClick={handleLogin}>
+            Registrer deg
+          </Button>
         </ContentWrapper>
       </CardContent>
     </Card>

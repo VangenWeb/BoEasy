@@ -3,11 +3,10 @@ import {
   Backdrop,
   Button,
   Card,
-  CardActionArea,
-  CardActions,
   CardContent,
   CardHeader,
   CircularProgress,
+  FormControl,
   TextField,
 } from "@mui/material";
 import { useRouter } from "next/router";
@@ -21,6 +20,7 @@ const PageWrapper = styled(BasePageWrapper)`
   align-items: center;
   margin-top: 2rem;
 `;
+
 export default function CreateGroup() {
   const router = useRouter();
   const [groupName, setGroupName] = useState("");
@@ -44,34 +44,36 @@ export default function CreateGroup() {
       <Backdrop open={isLoading}>
         <CircularProgress />
       </Backdrop>
+
       <Card
         sx={{
           maxWidth: 600,
         }}
       >
-        <CardHeader title="Create group" />
+        <CardHeader title="Opprett borettslag" />
         <CardContent>
-          <TextField
-            size="small"
-            label="Group Name"
-            value={groupName}
-            onChange={(event) => {
-              setGroupName(event.target.value);
-            }}
-          />
+          <FormControl>
+            <TextField
+              size="small"
+              label="Navn på borettslag"
+              value={groupName}
+              onChange={(event) => {
+                setGroupName(event.target.value);
+              }}
+            />
+            <TextField size="small" label="Adresse" />
+          </FormControl>
         </CardContent>
-        <CardActionArea>
-          <Button
-            onClick={handleCreateGroup}
-            sx={{
-              width: "100%",
-            }}
-            variant="contained"
-            color="primary"
-          >
-            Create
-          </Button>
-        </CardActionArea>
+        <Button
+          onClick={handleCreateGroup}
+          sx={{
+            width: "100%",
+          }}
+          variant="contained"
+          color="primary"
+        >
+          Opprett
+        </Button>
       </Card>
     </PageWrapper>
   );

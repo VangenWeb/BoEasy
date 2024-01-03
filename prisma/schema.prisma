@@ -6,7 +6,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   // NOTE: When using mysql or sqlserver, uncomment the @db.Text annotations in model Account below
   // Further reading:
   // https://next-auth.js.org/adapters/prisma#create-the-prisma-schema
@@ -49,6 +49,8 @@ model Session {
 
 model User {
   id                    String    @id @default(cuid())
+  role                  String    @default("user")
+
   name                  String?
   email                 String?   @unique
   emailVerified         DateTime?
@@ -58,10 +60,8 @@ model User {
   primaryGroup          Group?    @relation("primaryGroup", fields: [primaryGroupId], references: [id], onDelete: Cascade)
   primaryGroupId        String?
   groups                Group[]
-  tasks                 Task[]
-  periodicTasks         PeriodicTask[]
-  createdTasks          Task[]    @relation("createdByUser")
-  createdPeriodicTasks  PeriodicTask[]    @relation("createdByUser")
+  ownedGroups           Group[]   @relation("owner")
+  adminGroups           Group[]   @relation("groupAdmins")
 }
 
 model VerificationToken {
@@ -77,42 +77,53 @@ model Group {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   name      String
+  ownerId   String
+  owner     User     @relation("owner", fields: [ownerId], references: [id], onDelete: Cascade)
+  admins    User[]   @relation("groupAdmins")
   users     User[]
-  tasks     Task[]
-  periodicTasks PeriodicTask[]
   primaryUsers User[] @relation("primaryGroup")
+
+  folders   SchemaFolder[]
+  schemas   Schema[]
 }
 
-model Task {
-  id              String   @id @default(cuid())
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-  name            String
-  description     String? 
-  expires         DateTime
-  periodically    String?
-  period          DateTime?
-  completed       Boolean  @default(false)
-  seenByUser      Boolean  @default(false)
-  group           Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
-  groupId         String
-  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId          String
-  createdBy       User    @relation("createdByUser", fields: [createdById], references: [id], onDelete: Cascade)
-  createdById     String
+model SchemaFolder {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  groupId   String
+  group     Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  name      String
+
+  parentId  String?
+  parent    SchemaFolder? @relation("parent", fields: [parentId], references: [id], onDelete: Cascade)
+  
+  children  SchemaFolder[] @relation("parent")
+  schemas   Schema[] @relation("parent")
 }
 
-model PeriodicTask {
-  id            String   @id @default(cuid())
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  name          String
-  description   String? 
-  repeats       String
-  group         Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
-  groupId       String
-  users         User[]     
-  userId        String
-  createdBy     User    @relation("createdByUser", fields: [createdById], references: [id], onDelete: Cascade)
-  createdById   String
+model Schema {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  name      String
+  fields    Field[]
+
+  groupId   String
+  group     Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  
+  parentFolderId String?
+  parentFolder SchemaFolder? @relation("parent", fields: [parentFolderId], references: [id], onDelete: Cascade)
+}
+
+model Field {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  name      String
+  type      String
+  schema    Schema   @relation(fields: [schemaId], references: [id], onDelete: Cascade)
+  schemaId  String
 }

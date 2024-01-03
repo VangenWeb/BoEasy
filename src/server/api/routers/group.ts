@@ -1,9 +1,20 @@
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
-import { createGroup, createPrimaryGroup, getUserGroups } from "../bll";
-import { CreateGroupSchema } from "../bll/group/types";
+import {
+  createGroup,
+  createPrimaryGroup,
+  getGroup,
+  getUserGroups,
+} from "../bll";
+import { CreateGroupSchema, GetGroupSchema } from "../bll/group/types";
 
 export const groupRouter = createTRPCRouter({
+  getGroup: protectedProcedure
+    .input(GetGroupSchema.omit({ userId: true }))
+    .query(({ input, ctx }) =>
+      getGroup({ ...input, userId: ctx.session.user.id }),
+    ),
+
   getUserGroups: protectedProcedure
     .input(z.string())
     .query(({ input }) => getUserGroups(input)),
