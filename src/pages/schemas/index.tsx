@@ -70,9 +70,6 @@ export default function Schemas() {
     <PageWrapper>
       <Wrapper>
         <ActionWrapper>
-          <CreateSchemaButton>
-            <NoteAddIcon />
-          </CreateSchemaButton>
           <CreateFolderButton onClick={handleCreateFolder(null)}>
             <CreateNewFolderIcon />
           </CreateFolderButton>

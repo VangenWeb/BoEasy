@@ -6,6 +6,8 @@ import {
   type CreateFolderInput,
   GetGroupFoldersInput,
   GetChildrenInput,
+  CreateSchemaSchema,
+  CreateSchemaSchemaInput,
 } from "./types";
 import { AndyQuery } from "../types";
 import { userHasBasicAccessToGroup } from "../util/userHasBasicAccessToGroup";
@@ -135,5 +137,52 @@ export async function getChildren({
       folders,
       schemas,
     },
+  };
+}
+
+export async function createSchema(input: CreateSchemaSchemaInput) {
+  if (!(await userHasAdminAccess(input.userId, input.groupId))) {
+    return {
+      ok: false,
+      error: "User does not have admin access to group",
+    };
+  }
+
+  const schema = await prisma.schema.create({
+    data: {
+      name: input.name,
+      parentFolderId: input.parentId,
+      groupId: input.groupId,
+      recurrence: input.recurrence,
+      audience: input.audience,
+    },
+  });
+
+  if (!schema) {
+    return {
+      ok: false,
+      error: "Schema not created",
+    };
+  }
+  const fieldsInput = input.fields.map((field) => ({
+    name: field.name,
+    type: field.type,
+    schemaId: schema.id,
+  }));
+
+  const fields = await prisma.field.createMany({
+    data: fieldsInput,
+  });
+
+  if (!fields) {
+    return {
+      ok: false,
+      error: "Fields not created",
+    };
+  }
+
+  return {
+    ok: true,
+    schema,
   };
 }

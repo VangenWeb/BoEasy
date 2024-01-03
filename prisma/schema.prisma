@@ -99,7 +99,7 @@ model SchemaFolder {
 
   parentId  String?
   parent    SchemaFolder? @relation("parent", fields: [parentId], references: [id], onDelete: Cascade)
-  
+
   children  SchemaFolder[] @relation("parent")
   schemas   Schema[] @relation("parent")
 }
@@ -108,8 +108,10 @@ model Schema {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  name      String
-  fields    Field[]
+  name       String
+  recurrence SchemaRecurrence  
+  audience   SchemaAudience
+  fields     Field[]
 
   groupId   String
   group     Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
@@ -123,7 +125,28 @@ model Field {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   name      String
-  type      String
+  type      FieldType
   schema    Schema   @relation(fields: [schemaId], references: [id], onDelete: Cascade)
   schemaId  String
+}
+
+enum SchemaRecurrence {
+  none
+  monthly
+  quarterly
+  yearly
+	@@map("Recurrence")
+}
+
+enum SchemaAudience {
+  none
+  group
+  owner
+  @@map("Audience")
+}
+
+enum FieldType {
+  text
+  number
+  checkbox
 }

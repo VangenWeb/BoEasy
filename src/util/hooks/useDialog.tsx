@@ -3,9 +3,10 @@ import { useState } from "react";
 
 interface useDialogProps {
   dialogContent: JSX.Element;
+  fullscreen?: boolean;
 }
 
-export function useDialog({ dialogContent }: useDialogProps) {
+export function useDialog({ dialogContent, fullscreen }: useDialogProps) {
   const [open, setOpen] = useState(false);
 
   function handleClose() {
@@ -18,7 +19,11 @@ export function useDialog({ dialogContent }: useDialogProps) {
 
   function DialogComponent() {
     return (
-      <Dialog open={open} onClose={handleClose}>
+      <Dialog
+        fullScreen={fullscreen ?? false}
+        open={open}
+        onClose={handleClose}
+      >
         {dialogContent}
       </Dialog>
     );

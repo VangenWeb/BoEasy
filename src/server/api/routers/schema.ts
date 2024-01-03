@@ -1,6 +1,12 @@
-import { createFolder, getChildren, getGroupFolders } from "../bll/schema/bll";
+import {
+  createFolder,
+  createSchema,
+  getChildren,
+  getGroupFolders,
+} from "../bll/schema/bll";
 import {
   CreateFolderScheme,
+  CreateSchemaSchema,
   GetChildrenSchema,
   GetGroupFoldersSchema,
 } from "../bll/schema/types";
@@ -11,6 +17,11 @@ export const schemaRouter = createTRPCRouter({
     .input(CreateFolderScheme.omit({ userId: true }))
     .mutation(({ input, ctx }) =>
       createFolder({ ...input, userId: ctx.session.user.id }),
+    ),
+  createSchema: protectedProcedure
+    .input(CreateSchemaSchema.omit({ userId: true }))
+    .mutation(({ input, ctx }) =>
+      createSchema({ ...input, userId: ctx.session.user.id }),
     ),
   getGroupFolders: protectedProcedure
     .input(GetGroupFoldersSchema.omit({ userId: true }))

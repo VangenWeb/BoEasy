@@ -1,15 +1,21 @@
 import styled from "@emotion/styled";
-import CreateNewFolderIcon from "@mui/icons-material/CreateNewFolder";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import FolderIcon from "@mui/icons-material/Folder";
 import NoteAddIcon from "@mui/icons-material/NoteAdd";
+import FolderIcon from "@mui/icons-material/Folder";
+import CreateNewFolderIcon from "@mui/icons-material/CreateNewFolder";
+import DeleteIcon from "@mui/icons-material/Delete";
 import { CircularProgress, IconButton } from "@mui/material";
 import { type SchemaFolder } from "@prisma/client";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { api } from "~/utils/api";
 import SchemaRow from "./SchemaRow";
 import SettingsApplicationsIcon from "@mui/icons-material/SettingsApplications";
+import { IconMenu } from "~/components/Menu";
+import { useDialog } from "~/util/hooks";
+import { CreateSchema } from "./CreateSchemaDialog";
+import { CreateSchemaContextProvider } from "~/util/context/CreateSchemaContext";
+import { useSnack } from "~/util/hooks/useSnack";
 
 const Wrapper = styled.div`
   display: flex;
@@ -50,7 +56,25 @@ const FolderWrapper = styled.div`
 
 const FolderRow: React.FC<SchemaFolder> = (folder) => {
   const [isExpanded, setIsExpanded] = useState(false);
-  const [children, setChildren] = useState<string[]>([]);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const menuAnchor = useRef<HTMLButtonElement>(null);
+  const { DialogComponent, handleToggle: handleToggleCreateSchema } = useDialog(
+    {
+      fullscreen: true,
+      dialogContent: (
+        <CreateSchema
+          groupId={folder.groupId}
+          parentId={folder.id}
+          parentName={folder.name}
+          handleClose={handleCloseCreateSchemaDialog}
+        />
+      ),
+    },
+  );
+  const { SnackComponent, createSnack } = useSnack();
+  function handleCloseCreateSchemaDialog() {
+    handleToggleCreateSchema();
+  }
 
   const {
     data: childrenData,
@@ -97,6 +121,21 @@ const FolderRow: React.FC<SchemaFolder> = (folder) => {
     setIsExpanded(!isExpanded);
   };
 
+  function handleOpenMenu() {
+    setIsMenuOpen(true);
+  }
+
+  function handleCloseMenu() {
+    setIsMenuOpen(false);
+  }
+
+  function handleSuccess() {
+    void refetchChildrenFolders().catch((err) => console.error(err));
+    handleCloseMenu();
+    handleCloseCreateSchemaDialog();
+    createSnack("Skjema opprettet", "success");
+  }
+
   return (
     <Wrapper>
       <NameContainer isExpanded={isExpanded}>
@@ -105,7 +144,7 @@ const FolderRow: React.FC<SchemaFolder> = (folder) => {
           <CircularProgress size={16} />
         )}
         <ActionRow>
-          <IconButton>
+          <IconButton ref={menuAnchor} onClick={handleOpenMenu}>
             <SettingsApplicationsIcon />
           </IconButton>
           <IconButton onClick={handleExpand}>
@@ -125,6 +164,38 @@ const FolderRow: React.FC<SchemaFolder> = (folder) => {
             })}
         </FolderWrapper>
       )}
+      <IconMenu
+        items={[
+          {
+            type: "item",
+            text: "Opprett mappe",
+            icon: <CreateNewFolderIcon />,
+            onClick: handleCreateFolder,
+          },
+          {
+            type: "item",
+            text: "Opprett skjema",
+            icon: <NoteAddIcon />,
+            onClick: handleToggleCreateSchema,
+          },
+          {
+            type: "divider",
+          },
+          {
+            type: "item",
+            text: "Slett mappe",
+            icon: <DeleteIcon />,
+            onClick: () => void 0,
+          },
+        ]}
+        anchor={menuAnchor?.current}
+        open={isMenuOpen}
+        handleClose={handleCloseMenu}
+      />
+      <CreateSchemaContextProvider onSuccess={handleSuccess}>
+        <DialogComponent />
+      </CreateSchemaContextProvider>
+      <SnackComponent />
     </Wrapper>
   );
 };
