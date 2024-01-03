@@ -1,8 +1,8 @@
-import { Group } from "@prisma/client";
+import { type Group } from "@prisma/client";
 import { prisma } from "~/server/db";
 import { userHasBasicAccessToGroup } from "../util/userHasBasicAccessToGroup";
-import { GetGroupInput, type CreateGroupInput } from "./types";
-import { AndyQuery } from "../types";
+import { type GetGroupInput, type CreateGroupInput } from "./types";
+import { type AndyQuery } from "../types";
 
 export async function getUserGroups(userId: string) {
   const groups = await prisma.group.findMany({
