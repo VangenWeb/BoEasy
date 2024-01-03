@@ -1,5 +1,4 @@
 import { prisma } from "~/server/db";
-import { GetUserGroupTasksInput } from "./types";
 
 export async function getUserPrimaryGroup(userId: string) {
   const group = await prisma.user.findUnique({

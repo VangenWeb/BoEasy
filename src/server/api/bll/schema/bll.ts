@@ -1,16 +1,14 @@
-import { Schema, type SchemaFolder } from "@prisma/client";
+import { type Schema, type SchemaFolder } from "@prisma/client";
 import { prisma } from "~/server/db";
+import { type AndyQuery } from "../types";
 import { userHasAdminAccess } from "../util/userHasAdminAcces";
-import {
-  GetGroupFoldersSchema,
-  type CreateFolderInput,
-  GetGroupFoldersInput,
-  GetChildrenInput,
-  CreateSchemaSchema,
-  CreateSchemaSchemaInput,
-} from "./types";
-import { AndyQuery } from "../types";
 import { userHasBasicAccessToGroup } from "../util/userHasBasicAccessToGroup";
+import {
+  type CreateSchemaSchemaInput,
+  type GetChildrenInput,
+  type GetGroupFoldersInput,
+  type CreateFolderInput,
+} from "./types";
 
 export async function createFolder(input: CreateFolderInput) {
   if (!(await userHasAdminAccess(input.userId, input.groupId))) {
