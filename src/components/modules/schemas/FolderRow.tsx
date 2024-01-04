@@ -191,6 +191,10 @@ const FolderRow: React.FC<SchemaFolder> = (folder) => {
         handleClose={handleCloseMenu}
       />
       <CreateSchemaContextProvider onSuccess={handleSuccess}>
+        {/* Not sure how I like having this here, but it can be moved at a later stage.
+            its one of those in the moment decisions that take too much time to fix for a prototype.
+            It's also easy session storage ish behaviour. 
+        */}
         <DialogComponent />
       </CreateSchemaContextProvider>
       <SnackComponent />

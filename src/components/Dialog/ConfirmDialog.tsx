@@ -10,9 +10,11 @@ interface ConfirmDialogProps {
   description?: string;
   confirmText?: string;
   cancelText?: string;
+  declineText?: string;
 
   onConfirm: () => void;
-  onCancel: () => void;
+  onCancel?: () => void;
+  onDecline?: () => void;
 }
 
 // Made for the useDialog hook
@@ -21,9 +23,10 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
   description,
   onConfirm,
   onCancel,
-
+  onDecline,
+  declineText = "Nei",
   confirmText = "Ja",
-  cancelText = "Nei",
+  cancelText = "Avbryt",
 }) => {
   return (
     <>
@@ -36,7 +39,16 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
         )}
       </DialogContent>
       <DialogActions>
-        <Button onClick={onCancel}>{cancelText}</Button>
+        {onCancel && (
+          <Button onClick={onCancel} variant="outlined">
+            {cancelText}
+          </Button>
+        )}
+        {onDecline && (
+          <Button onClick={onDecline} variant="outlined">
+            {declineText}
+          </Button>
+        )}
         <Button onClick={onConfirm} autoFocus variant="contained">
           {confirmText}
         </Button>
