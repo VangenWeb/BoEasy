@@ -2,7 +2,8 @@ import styled from "@emotion/styled";
 import ArticleIcon from "@mui/icons-material/Article";
 import SettingsApplicationsIcon from "@mui/icons-material/SettingsApplications";
 import { IconButton } from "@mui/material";
-import { Schema } from "@prisma/client";
+import { type Schema } from "@prisma/client";
+
 const Wrapper = styled.div`
   display: flex;
   flex-direction: row;

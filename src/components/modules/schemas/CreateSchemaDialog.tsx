@@ -1,27 +1,29 @@
 import styled from "@emotion/styled";
-import CloseIcon from "@mui/icons-material/Close";
-import RestartAltIcon from "@mui/icons-material/RestartAlt";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import CloseIcon from "@mui/icons-material/Close";
 import DeleteIcon from "@mui/icons-material/Delete";
+import RestartAltIcon from "@mui/icons-material/RestartAlt";
 import {
   Button,
   FormControl,
   InputLabel,
   MenuItem,
   Select,
-  type SelectChangeEvent,
   TextField,
   Typography,
+  type SelectChangeEvent,
 } from "@mui/material";
-import { useContext, useState } from "react";
-import { IconButton } from "~/components/Button";
-import { CreateSchemaContext } from "~/util/context/CreateSchemaContext";
-import { getFieldRowIcon } from "./util";
 import {
-  SchemaAudience,
   type FieldType,
+  type SchemaAudience,
   type SchemaRecurrence,
 } from "@prisma/client";
+import { useContext, useState } from "react";
+import { IconButton } from "~/components/Button";
+import { ConfirmDialog } from "~/components/Dialog";
+import { CreateSchemaContext } from "~/util/context/CreateSchemaContext";
+import { useDialog } from "~/util/hooks";
+import { getFieldRowIcon } from "./util";
 
 const Wrapper = styled.div`
   position: relative;
@@ -92,6 +94,11 @@ export const CreateSchema: React.FC<CreateSchemaProps> = ({
     createSchema,
   } = useContext(CreateSchemaContext);
 
+  const [dialogContent, setDialogContent] = useState<JSX.Element | null>(null);
+  const { DialogComponent, closeDialog, openDialog } = useDialog({
+    dialogContent: dialogContent ?? <></>,
+  });
+
   const [processStep, setProcessStep] = useState<"information" | "fields">(
     "information",
   );
@@ -115,10 +122,6 @@ export const CreateSchema: React.FC<CreateSchemaProps> = ({
   };
 
   const handleAddField = () => {
-    if (!fieldName || fieldName === "") {
-      alert("Feltnavn kan ikke være tomt");
-      return;
-    }
     addField(fieldType, fieldName);
     setFieldName("");
   };
@@ -130,31 +133,32 @@ export const CreateSchema: React.FC<CreateSchemaProps> = ({
   }
 
   function handleCloseSchemaDialog() {
-    const confirmed = confirm(
-      "Er du sikker på at du vil lukke skjemaet? Data kan gå tapt hvis nettstedet lukkes eller du navigerer bort fra denne siden.",
+    setDialogContent(
+      <ConfirmDialog
+        title="Lukk skjema?"
+        description="Dette kan medfære tap av data."
+        onConfirm={() => {
+          closeDialog();
+          handleClose();
+        }}
+        onCancel={closeDialog}
+      />,
     );
-
-    if (confirmed) {
-      handleClose();
-    }
+    openDialog();
   }
 
   function handleResetSchema() {
-    const confirmed = confirm("Er du sikker på at du vil slette skjemaet?");
-
-    if (confirmed) {
-      resetSchema();
-    }
+    resetSchema(true);
   }
 
   function handleGoToCreationStep(step: "information" | "fields") {
+    //TODO: Add verification
     return () => {
       setProcessStep(step);
     };
   }
 
   function handleCreateSchema() {
-    console.log("handleCreateSchemaClicked");
     if (!schema) {
       return;
     }
@@ -197,7 +201,7 @@ export const CreateSchema: React.FC<CreateSchemaProps> = ({
               value={schema?.recurrence}
               onChange={handleSchemaRecurrenceChange}
             >
-              <MenuItem value={"anytime"}>Ved nødvendighet</MenuItem>
+              <MenuItem value={"none"}>Ved nødvendighet</MenuItem>
               <MenuItem value={"monthly"}>Månedlig</MenuItem>
               <MenuItem value={"quarterly"}>Hvert kvartal</MenuItem>
               <MenuItem value={"yearly"}>Årlig</MenuItem>
@@ -272,6 +276,7 @@ export const CreateSchema: React.FC<CreateSchemaProps> = ({
           </Button>
         </>
       )}
+      <DialogComponent />
     </Wrapper>
   );
 };

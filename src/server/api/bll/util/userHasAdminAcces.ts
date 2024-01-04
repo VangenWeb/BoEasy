@@ -15,7 +15,7 @@ export async function userHasAdminAccess(userId: string, groupId: string) {
     return true;
   }
 
-  if (group?.admins.some((a) => a.id === userId)) {
+  if (group?.admins.some((user) => user.id === userId)) {
     return true;
   }
 

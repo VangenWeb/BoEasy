@@ -9,11 +9,15 @@ interface useDialogProps {
 export function useDialog({ dialogContent, fullscreen }: useDialogProps) {
   const [open, setOpen] = useState(false);
 
-  function handleClose() {
+  function closeDialog() {
     setOpen(false);
   }
 
-  function handleToggle() {
+  function openDialog() {
+    setOpen(true);
+  }
+
+  function toggle() {
     setOpen((prev) => !prev);
   }
 
@@ -22,7 +26,7 @@ export function useDialog({ dialogContent, fullscreen }: useDialogProps) {
       <Dialog
         fullScreen={fullscreen ?? false}
         open={open}
-        onClose={handleClose}
+        onClose={closeDialog}
       >
         {dialogContent}
       </Dialog>
@@ -30,7 +34,9 @@ export function useDialog({ dialogContent, fullscreen }: useDialogProps) {
   }
 
   return {
-    handleToggle,
+    closeDialog,
+    openDialog,
+    toggle,
     DialogComponent,
   };
 }

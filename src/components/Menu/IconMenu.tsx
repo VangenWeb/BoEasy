@@ -1,4 +1,3 @@
-import styled from "@emotion/styled";
 import {
   Divider,
   ListItemIcon,
@@ -6,7 +5,6 @@ import {
   Menu,
   MenuItem,
   MenuList,
-  Paper,
   Typography,
 } from "@mui/material";
 
@@ -41,7 +39,7 @@ export const IconMenu: React.FC<IconMenuProps> = ({
   ) {
     if (item.type === "item") {
       return (
-        <MenuItem key={`${item.text}${index}`} onClick={item.onClick}>
+        <MenuItem key={index} onClick={item.onClick}>
           <ListItemIcon>{item.icon}</ListItemIcon>
           <ListItemText>{item.text}</ListItemText>
           {item.typography && (

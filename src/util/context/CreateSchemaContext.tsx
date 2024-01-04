@@ -1,12 +1,15 @@
 import {
-  SchemaRecurrence,
+  type SchemaRecurrence,
   type Field,
-  FieldType,
-  SchemaAudience,
+  type FieldType,
+  type SchemaAudience,
 } from "@prisma/client";
 import React from "react";
 import { createContext, useState } from "react";
 import { api } from "~/utils/api";
+import { useSnack } from "../hooks/useSnack";
+import { useDialog } from "../hooks";
+import { ConfirmDialog } from "~/components";
 
 interface Schema {
   name: string;
@@ -23,7 +26,7 @@ interface CurrentGroupContextProps {
   setSchemaAudience: (audience: SchemaAudience) => void;
   addField: (type: FieldType, name: string) => void;
   removeField: (index: number) => void;
-  resetSchema: () => void;
+  resetSchema: (confirm?: boolean) => void;
   createSchema: (groupId: string, parentId: string) => void;
 }
 
@@ -47,6 +50,17 @@ interface CreateSchemaContextProviderProps {
 export const CreateSchemaContextProvider: React.CFC<
   CreateSchemaContextProviderProps
 > = ({ children, onSuccess, onError }) => {
+  const { SnackComponent, createSnack } = useSnack({
+    anchorOrigin: {
+      vertical: "top",
+      horizontal: "center",
+    },
+  });
+  const [dialogContent, setDialogContent] = useState<JSX.Element | null>(null);
+  const { DialogComponent, closeDialog, openDialog } = useDialog({
+    dialogContent: dialogContent ?? <></>,
+  });
+
   const [schema, setSchema] = useState<Schema | null>({
     name: "",
     fields: [],
@@ -90,9 +104,13 @@ export const CreateSchemaContextProvider: React.CFC<
 
   function addField(type: FieldType, name: string) {
     if (!!schema) {
+      if (!name || name === "") {
+        createSnack("Feltet må fylles ut", "error");
+        return;
+      }
       const newSchema: Schema = { ...schema };
       if (newSchema.fields.some((field) => field.name === name)) {
-        alert("Field name/text already exists");
+        createSnack("Feltet finnes allerede", "error");
         return;
       }
       newSchema.fields.push({ type, name });
@@ -108,12 +126,36 @@ export const CreateSchemaContextProvider: React.CFC<
     }
   }
 
-  function resetSchema() {
-    setSchema({ name: "", fields: [], recurrence: "none", audience: "none" });
+  function resetSchema(confirm?: boolean) {
+    if (!confirm) {
+      setSchema({
+        name: "",
+        fields: [],
+        recurrence: "none",
+        audience: "none",
+      });
+      return;
+    }
+
+    setDialogContent(
+      <ConfirmDialog
+        title="Tilbakestill skjema?"
+        onConfirm={() => {
+          setSchema({
+            name: "",
+            fields: [],
+            recurrence: "none",
+            audience: "none",
+          });
+          closeDialog();
+        }}
+        onCancel={closeDialog}
+      />,
+    );
+    openDialog();
   }
 
   function createSchema(groupId: string, parentId: string) {
-    console.log(schema);
     if (!!schema) {
       createSchemaMutation({
         groupId,
@@ -141,6 +183,8 @@ export const CreateSchemaContextProvider: React.CFC<
       }}
     >
       {children}
+      <SnackComponent />
+      <DialogComponent />
     </CreateSchemaContext.Provider>
   );
 };

@@ -23,6 +23,8 @@ const ContentWrapper = styled.div`
 `;
 
 export const Layout: React.CFC<LayoutProps> = ({ children }) => {
+  console.log("Layout Rendered");
+
   const session = useSession();
   const currentGroup = useContext(CurrentGroupContext);
 

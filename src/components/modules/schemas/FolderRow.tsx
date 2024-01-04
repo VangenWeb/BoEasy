@@ -58,22 +58,20 @@ const FolderRow: React.FC<SchemaFolder> = (folder) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuAnchor = useRef<HTMLButtonElement>(null);
-  const { DialogComponent, handleToggle: handleToggleCreateSchema } = useDialog(
-    {
-      fullscreen: true,
-      dialogContent: (
-        <CreateSchema
-          groupId={folder.groupId}
-          parentId={folder.id}
-          parentName={folder.name}
-          handleClose={handleCloseCreateSchemaDialog}
-        />
-      ),
-    },
-  );
-  const { SnackComponent, createSnack } = useSnack();
+  const { DialogComponent, toggle: toggleCreateSchema } = useDialog({
+    fullscreen: true,
+    dialogContent: (
+      <CreateSchema
+        groupId={folder.groupId}
+        parentId={folder.id}
+        parentName={folder.name}
+        handleClose={handleCloseCreateSchemaDialog}
+      />
+    ),
+  });
+  const { SnackComponent, createSnack } = useSnack({});
   function handleCloseCreateSchemaDialog() {
-    handleToggleCreateSchema();
+    toggleCreateSchema();
   }
 
   const {
@@ -91,7 +89,7 @@ const FolderRow: React.FC<SchemaFolder> = (folder) => {
     },
   );
 
-  const { mutate, isLoading } = api.schema.createFolder.useMutation();
+  const { mutate } = api.schema.createFolder.useMutation();
 
   function handleCreateFolder() {
     if (!folder.groupId) {
@@ -176,7 +174,7 @@ const FolderRow: React.FC<SchemaFolder> = (folder) => {
             type: "item",
             text: "Opprett skjema",
             icon: <NoteAddIcon />,
-            onClick: handleToggleCreateSchema,
+            onClick: toggleCreateSchema,
           },
           {
             type: "divider",

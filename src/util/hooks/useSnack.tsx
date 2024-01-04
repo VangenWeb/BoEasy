@@ -1,9 +1,19 @@
-import { Alert, Snackbar } from "@mui/material";
+import { Alert, Snackbar, type SnackbarProps } from "@mui/material";
 import { useState } from "react";
 
 type SnackType = "success" | "error" | "warning" | "info";
 
-export function useSnack() {
+interface UseSnackProps {
+  autoHideDuration?: number;
+  anchorOrigin?: SnackbarProps["anchorOrigin"];
+}
+/**
+ * I wanted to make a hook for this since I didn't want to have to make the logic for this every time.
+ * Initially I wanted to make something that would only return the createSnack function. But that would
+ * require me to have a component to render it in, somewhere higher up in the hierarchy. And I decided
+ * I didn't want to rerender a high hierarchy component to show a snack.
+ */
+export function useSnack({ autoHideDuration, anchorOrigin }: UseSnackProps) {
   const [open, setOpen] = useState(false);
   const [snack, setSnack] = useState<JSX.Element | null>(null);
 
@@ -22,7 +32,12 @@ export function useSnack() {
 
   function SnackComponent() {
     return (
-      <Snackbar open={open} autoHideDuration={3000} onClose={handleClose}>
+      <Snackbar
+        open={open}
+        autoHideDuration={autoHideDuration ?? 3000}
+        onClose={handleClose}
+        anchorOrigin={anchorOrigin}
+      >
         {snack ?? <></>}
       </Snackbar>
     );

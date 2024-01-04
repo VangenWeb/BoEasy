@@ -1,21 +1,22 @@
-import { type Session } from "next-auth";
-import { SessionProvider, useSession } from "next-auth/react";
-import { type AppType } from "next/app";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { type Session } from "next-auth";
+import { SessionProvider } from "next-auth/react";
+import { type AppType } from "next/app";
 import { api } from "~/utils/api";
 
-import "~/styles/globals.css";
-import { Layout } from "~/components/modules";
-import ThemeRegistry from "~/theme/ThemeRegistry";
-import { useContext, useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+import { Layout } from "~/components/modules";
+import "~/styles/globals.css";
+import ThemeRegistry from "~/theme/ThemeRegistry";
 import { CurrentGroupContext } from "~/util/context/CurrentGroupContext";
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
   pageProps: { session, ...pageProps },
 }) => {
+  console.log("App Rendered");
   const router = useRouter();
   const [currentGroup, setCurrentGroup] = useState<string | null>(null);
 

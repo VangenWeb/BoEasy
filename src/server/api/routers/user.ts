@@ -12,7 +12,6 @@ export const userRouter = createTRPCRouter({
   createGroup: protectedProcedure
     .input(CreateGroupSchema.omit({ creator: true }))
     .mutation(({ input, ctx }) => {
-      //Todo premium limitations? Doubtful but remember, it can be done ;).
       return createGroup({ ...input, creator: ctx.session.user.id });
     }),
 });
