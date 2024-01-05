@@ -1,14 +1,14 @@
-import { type Schema, type SchemaFolder } from "@prisma/client";
+import { Prisma, type Schema, type SchemaFolder } from "@prisma/client";
 import { prisma } from "~/server/db";
 import { type AndyQuery } from "../types";
 import { userHasAdminAccess } from "../util/userHasAdminAcces";
 import { userHasBasicAccessToGroup } from "../util/userHasBasicAccessToGroup";
 import {
+  type GetSchemaInput,
+  type CreateFolderInput,
   type CreateSchemaSchemaInput,
   type GetChildrenInput,
   type GetGroupFoldersInput,
-  type CreateFolderInput,
-  GetSchemaInput,
 } from "./types";
 
 export async function createFolder(input: CreateFolderInput) {
@@ -190,17 +190,28 @@ export async function getSchema({
   groupId,
   schemaId,
   userId,
-}: GetSchemaInput): AndyQuery<Schema> {
+}: GetSchemaInput): AndyQuery<
+  Prisma.SchemaGetPayload<{
+    include: {
+      fields: true;
+    };
+  }>
+> {
   const access = await userHasBasicAccessToGroup(userId, groupId);
+
   if (!access) {
     return {
       ok: false,
       error: "User does not have access to group",
     };
   }
+
   const schema = await prisma.schema.findUnique({
     where: {
       id: schemaId,
+    },
+    include: {
+      fields: true,
     },
   });
 

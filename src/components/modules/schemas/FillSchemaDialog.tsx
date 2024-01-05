@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { Button } from "@mui/material";
+import { Button, TextField, Typography } from "@mui/material";
 import { IconButton } from "~/components/Button";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import RestartAltIcon from "@mui/icons-material/RestartAlt";
@@ -7,6 +7,8 @@ import CloseIcon from "@mui/icons-material/Close";
 import { useState } from "react";
 import { useDialog } from "~/util/hooks";
 import { ConfirmDialog } from "~/components/Dialog";
+import { api } from "~/utils/api";
+import { Schema } from "@prisma/client";
 
 const Wrapper = styled.div`
   position: relative;
@@ -23,27 +25,50 @@ const Wrapper = styled.div`
 `;
 
 const ActionContainer = styled.div`
-  display: flex;
+  display: inline-block;
+  width: 120px;
   flex-direction: row;
   margin-left: auto;
+  gap: 0.5rem;
+
+  & > * {
+    float: right;
+  }
+
+  & > :last-child {
+    margin-right: 8px;
+  }
+`;
+
+const TitleContainer = styled.div`
+  display: flex;
+  flex-direction: row;
   gap: 0.5rem;
 `;
 
 interface FillSchemaDialogProps {
+  schema: Schema;
   schemaId: string;
   handleClose: () => void;
+  origin: "new" | "edit";
 }
 
 export const FillSchemaDialog: React.FC<FillSchemaDialogProps> = ({
+  schema,
   schemaId,
-
+  origin,
   handleClose,
 }) => {
   const [dialogContent, setDialogContent] = useState<JSX.Element | null>(null);
   const { DialogComponent, closeDialog, openDialog } = useDialog({
     dialogContent: dialogContent ?? <></>,
   });
-
+  const { data: schemaData, isLoading: schemaLoading } =
+    api.schema.getSchema.useQuery({
+      groupId: schema.groupId,
+      schemaId: schemaId,
+    });
+  console.log(schemaData);
   function handleCloseSchemaDialog() {
     setDialogContent(
       <ConfirmDialog
@@ -66,14 +91,24 @@ export const FillSchemaDialog: React.FC<FillSchemaDialogProps> = ({
   }
   return (
     <Wrapper>
-      <ActionContainer>
-        <IconButton>
-          <RestartAltIcon />
-        </IconButton>
-        <IconButton onClick={handleCloseSchemaDialog}>
-          <CloseIcon />
-        </IconButton>
-      </ActionContainer>
+      <TitleContainer>
+        <Typography variant="h6">{schema.name}</Typography>
+        <ActionContainer>
+          <IconButton onClick={handleCloseSchemaDialog}>
+            <CloseIcon />
+          </IconButton>
+          <IconButton>
+            <RestartAltIcon />
+          </IconButton>
+        </ActionContainer>
+      </TitleContainer>
+      {schemaData?.ok &&
+        schemaData.data.fields.map((field) => (
+          <>
+            <Typography>{field.name}</Typography>
+            <TextField />
+          </>
+        ))}
       <DialogComponent />
     </Wrapper>
   );

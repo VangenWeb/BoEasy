@@ -34,6 +34,8 @@ const SchemaRow: React.FC<Schema> = (schema) => {
     fullscreen: true,
     dialogContent: (
       <FillSchemaDialog
+        schema={schema}
+        origin="new"
         schemaId={schema.id}
         handleClose={handleCloseSchemaDialog}
       />
