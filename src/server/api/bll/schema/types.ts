@@ -51,8 +51,15 @@ export const CreateSchemaSchema = z.object({
   audience: SchemaAudienceSchema,
 });
 
+export const GetSchemaSchema = z.object({
+  schemaId: z.string(),
+  groupId: z.string(),
+  userId: z.string(),
+});
+
 export type CreateFolderInput = z.infer<typeof CreateFolderScheme>;
 export type GetGroupFoldersInput = z.infer<typeof GetGroupFoldersSchema>;
 export type GetGroupSchemasInput = z.infer<typeof GetGroupSchemasSchema>;
 export type GetChildrenInput = z.infer<typeof GetChildrenSchema>;
 export type CreateSchemaSchemaInput = z.infer<typeof CreateSchemaSchema>;
+export type GetSchemaInput = z.infer<typeof GetSchemaSchema>;

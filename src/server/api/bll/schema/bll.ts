@@ -8,6 +8,7 @@ import {
   type GetChildrenInput,
   type GetGroupFoldersInput,
   type CreateFolderInput,
+  GetSchemaInput,
 } from "./types";
 
 export async function createFolder(input: CreateFolderInput) {
@@ -182,5 +183,36 @@ export async function createSchema(input: CreateSchemaSchemaInput) {
   return {
     ok: true,
     schema,
+  };
+}
+
+export async function getSchema({
+  groupId,
+  schemaId,
+  userId,
+}: GetSchemaInput): AndyQuery<Schema> {
+  const access = await userHasBasicAccessToGroup(userId, groupId);
+  if (!access) {
+    return {
+      ok: false,
+      error: "User does not have access to group",
+    };
+  }
+  const schema = await prisma.schema.findUnique({
+    where: {
+      id: schemaId,
+    },
+  });
+
+  if (!schema) {
+    return {
+      ok: false,
+      error: "Schema not found",
+    };
+  }
+
+  return {
+    ok: true,
+    data: schema,
   };
 }
