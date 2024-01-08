@@ -1,4 +1,4 @@
-import { Button, CircularProgress } from "@mui/material";
+import { Button, CircularProgress, Typography } from "@mui/material";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { PageWrapper } from "~/components";
@@ -27,8 +27,10 @@ export default function Home() {
   if (!groupData?.group) {
     return (
       <PageWrapper>
-        <div>Du er ikke med i noen borettslag</div>
-        <div>Klikk her for å lage et nytt</div>
+        <Typography>
+          <div>Du er ikke med i noen borettslag</div>
+          <div>Klikk her for å lage et nytt</div>
+        </Typography>
         <Button
           variant="contained"
           color="primary"
@@ -41,7 +43,6 @@ export default function Home() {
         >
           Create Group
         </Button>
-        Eller spørr om å bli med i ett eksisterende.
       </PageWrapper>
     );
   }
