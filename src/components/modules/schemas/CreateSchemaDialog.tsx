@@ -12,6 +12,7 @@ import {
   TextField,
   Typography,
   type SelectChangeEvent,
+  CircularProgress,
 } from "@mui/material";
 import {
   type FieldType,
@@ -85,6 +86,7 @@ export const CreateSchemaDialog: React.FC<CreateSchemaProps> = ({
 }) => {
   const {
     schema,
+    isCreating,
     setSchemaName,
     setSchemaRecurrence,
     setSchemaAudience,
@@ -267,12 +269,13 @@ export const CreateSchemaDialog: React.FC<CreateSchemaProps> = ({
           </FieldContainer>
           <Button
             variant="contained"
+            disabled={isCreating}
             sx={{
               marginTop: "auto",
             }}
             onClick={handleCreateSchema}
           >
-            Lag Skjema
+            {isCreating ? <CircularProgress size="1.5rem" /> : "Lag Skjema"}
           </Button>
         </>
       )}

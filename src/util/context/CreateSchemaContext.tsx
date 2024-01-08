@@ -20,6 +20,7 @@ interface Schema {
 
 interface CurrentGroupContextProps {
   schema: Schema | null;
+  isCreating: boolean;
   setSchema: React.Dispatch<React.SetStateAction<Schema | null>>;
   setSchemaName: (name: string) => void;
   setSchemaRecurrence: (recurrence: SchemaRecurrence) => void;
@@ -32,6 +33,7 @@ interface CurrentGroupContextProps {
 
 export const CreateSchemaContext = createContext<CurrentGroupContextProps>({
   schema: null,
+  isCreating: false,
   setSchema: () => void 0,
   setSchemaName: () => void 0,
   setSchemaRecurrence: () => void 0,
@@ -68,15 +70,16 @@ export const CreateSchemaContextProvider: React.CFC<
     audience: "none",
   });
 
-  const { mutate: createSchemaMutation } = api.schema.createSchema.useMutation({
-    onSuccess: () => {
-      if (onSuccess) onSuccess();
-      resetSchema();
-    },
-    onError: (err) => {
-      if (onError) onError(err.message);
-    },
-  });
+  const { mutate: createSchemaMutation, isLoading: isCreating } =
+    api.schema.createSchema.useMutation({
+      onSuccess: () => {
+        if (onSuccess) onSuccess();
+        resetSchema();
+      },
+      onError: (err) => {
+        if (onError) onError(err.message);
+      },
+    });
 
   function setSchemaName(name: string) {
     if (!!schema) {
@@ -172,6 +175,7 @@ export const CreateSchemaContextProvider: React.CFC<
     <CreateSchemaContext.Provider
       value={{
         schema,
+        isCreating,
         setSchema,
         setSchemaName,
         setSchemaRecurrence,
