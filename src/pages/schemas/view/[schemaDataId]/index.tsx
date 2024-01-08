@@ -68,7 +68,6 @@ export default function SchemaDataList() {
       <Typography
         variant="h5"
         sx={{
-          borderBottom: "2px solid black",
           paddingBottom: "0.5rem",
           display: "flex",
           flexDirection: "row",
@@ -83,6 +82,14 @@ export default function SchemaDataList() {
         >
           {data?.data.createdBy?.name}
         </Typography>
+      </Typography>
+      <Typography
+        variant="body1"
+        sx={{
+          borderBottom: "2px solid black",
+        }}
+      >
+        {data.data.createdAt.toDateString()}
       </Typography>
       {schemaData.data.fields.map((field) => (
         <FieldRow key={field.id} field={field} />
