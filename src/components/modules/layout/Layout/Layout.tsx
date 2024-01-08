@@ -1,9 +1,11 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useLayoutEffect } from "react";
 import { Header } from "../Header/Header";
 import styled from "@emotion/styled";
 import { useSession } from "next-auth/react";
 import { AuthHeader } from "../Header/AuthHeader";
 import { CurrentGroupContext } from "~/util/context/CurrentGroupContext";
+import { redirect } from "next/navigation";
+import { useRouter } from "next/router";
 
 interface LayoutProps {
   children?: React.ReactNode;
@@ -27,6 +29,7 @@ export const Layout: React.CFC<LayoutProps> = ({ children }) => {
 
   const session = useSession();
   const currentGroup = useContext(CurrentGroupContext);
+  const router = useRouter();
 
   // We set the current group to the primary group of the user.
   // This is done here as I couldn't figure out how to do it in the _app.tsx file without querying.
@@ -36,6 +39,14 @@ export const Layout: React.CFC<LayoutProps> = ({ children }) => {
       currentGroup.setCurrentGroup(session?.data?.user.primaryGroupId ?? null);
     }
   }, [currentGroup, session?.data?.user.primaryGroupId]);
+
+  // Handle unathenticated access to pages
+  // Todo: add exceptions for about etc.
+  useEffect(() => {
+    if (session.status === "unauthenticated") {
+      router.push("/").catch((err) => console.error(err));
+    }
+  }, [session.status]);
 
   return (
     <LayoutWrapper className="flex min-h-screen flex-col">
