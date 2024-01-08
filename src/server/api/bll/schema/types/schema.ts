@@ -65,9 +65,15 @@ export const UpsertSchemaDataSchema = z.object({
   deliver: z.boolean(),
 });
 
+export const GetSchemaDataSchema = z.object({
+  userId: z.string(),
+  schemaDataId: z.string(),
+});
+
 export type CreateSchemaSchemaInput = z.infer<typeof CreateSchemaSchema>;
 export type GetSchemaInput = z.infer<typeof GetSchemaSchema>;
 export type UpsertSchemaDataInput = z.infer<typeof UpsertSchemaDataSchema>;
+export type GetSchemaDataInput = z.infer<typeof GetSchemaDataSchema>;
 
 export type SchemaDataFieldObject = z.infer<typeof SchemaDataFieldSchema>;
 export type SchemaDataObject = z.infer<typeof SchemaDataSchema>;
@@ -85,5 +91,12 @@ export type SchemaWithSchemaData = Prisma.SchemaGetPayload<{
 export type SchemaDataWithUser = Prisma.SchemaDataGetPayload<{
   include: {
     createdBy: true;
+  };
+}>;
+
+export type GetSchemaDataReturn = Prisma.SchemaDataGetPayload<{
+  include: {
+    createdBy: true;
+    schema: true;
   };
 }>;

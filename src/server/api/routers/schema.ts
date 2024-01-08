@@ -4,11 +4,13 @@ import {
   getChildren,
   getGroupFolders,
   getSchema,
+  getSchemaData,
   getSchemaWithSchemaData,
   upsertSchemaData,
 } from "../bll/schema/bll";
 import {
   CreateSchemaSchema,
+  GetSchemaDataSchema,
   GetSchemaSchema,
   UpsertSchemaDataSchema,
 } from "../bll/schema/types/schema";
@@ -45,6 +47,11 @@ export const schemaRouter = createTRPCRouter({
     .input(GetSchemaSchema.omit({ userId: true }))
     .query(({ input, ctx }) =>
       getSchemaWithSchemaData({ ...input, userId: ctx.session.user.id }),
+    ),
+  getSchemaData: protectedProcedure
+    .input(GetSchemaDataSchema.omit({ userId: true }))
+    .query(({ input, ctx }) =>
+      getSchemaData({ ...input, userId: ctx.session.user.id }),
     ),
   getGroupFolders: protectedProcedure
     .input(GetGroupFoldersSchema.omit({ userId: true }))

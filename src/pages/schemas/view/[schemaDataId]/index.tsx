@@ -7,7 +7,9 @@ import {
 } from "@mui/material";
 import { useRouter } from "next/router";
 import { useMemo, useState } from "react";
+import { FieldRow } from "~/components/modules/schemas/components/FieldRow";
 import { SchemaDataRow } from "~/components/modules/schemas/components/SchemaDataRow";
+import { SchemaDataSchema } from "~/server/api/bll/schema/types/schema";
 import { api } from "~/utils/api";
 
 const CenterWrapper = styled.div`
@@ -34,22 +36,16 @@ export default function SchemaDataList() {
   const [showDelivered, setShowDelivered] = useState(false);
   const router = useRouter();
 
-  const { data, isLoading, isFetching } =
-    api.schema.getSchemaWithSchemaData.useQuery({
-      schemaId: router.query.schemaId as string,
-    });
+  const { data, isLoading, isFetching } = api.schema.getSchemaData.useQuery({
+    schemaDataId: router.query.schemaDataId as string,
+  });
 
-  const files = useMemo(
-    () =>
-      data?.ok &&
-      data?.data.data.filter((schemaData) => {
-        if (showDelivered) {
-          return schemaData.delivered === showDelivered;
-        }
-        return true;
-      }),
-    [data, showDelivered],
-  );
+  const schemaData = useMemo(() => {
+    if (!data?.ok) return null;
+    return SchemaDataSchema.safeParse(data?.data?.data);
+  }, [data]);
+
+  console.log(schemaData);
 
   if (isLoading || isFetching) {
     return (
@@ -59,7 +55,7 @@ export default function SchemaDataList() {
     );
   }
 
-  if (!data?.ok) {
+  if (!data?.ok || !schemaData || schemaData?.success == false) {
     return (
       <CenterWrapper>
         <Typography variant="h3">Fant ikke skjema</Typography>
@@ -74,29 +70,24 @@ export default function SchemaDataList() {
         sx={{
           borderBottom: "2px solid black",
           paddingBottom: "0.5rem",
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "flex-end",
         }}
       >
-        {data.data.name}
-      </Typography>
-      <ActionRow>
-        <FormControlLabel
-          label="Bare vis leverte"
-          labelPlacement="start"
-          control={
-            <Checkbox
-              checked={showDelivered}
-              onChange={() => setShowDelivered(!showDelivered)}
-            />
-          }
+        {data.data.schema.name}
+        <Typography
           sx={{
             marginLeft: "auto",
           }}
-        />
-      </ActionRow>
-      {files &&
-        files.map((schemaData) => {
-          return <SchemaDataRow key={schemaData.id} {...schemaData} />;
-        })}
+        >
+          {data?.data.createdBy?.name}
+        </Typography>
+      </Typography>
+      {schemaData.data.fields.map((field) => (
+        <FieldRow key={field.id} field={field} />
+      ))}
+      <ActionRow></ActionRow>
     </Wrapper>
   );
 }
