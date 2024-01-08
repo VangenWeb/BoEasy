@@ -2,9 +2,7 @@ import styled from "@emotion/styled";
 import {
   Checkbox,
   CircularProgress,
-  FormControl,
   FormControlLabel,
-  FormLabel,
   Typography,
 } from "@mui/material";
 import { useRouter } from "next/router";
