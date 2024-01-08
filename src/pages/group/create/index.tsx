@@ -47,22 +47,38 @@ export default function CreateGroup() {
 
       <Card
         sx={{
-          maxWidth: 600,
+          width: "90%",
+          gap: "1rem",
+          display: "flex",
+          flexDirection: "column",
         }}
       >
         <CardHeader title="Opprett borettslag" />
-        <CardContent>
-          <FormControl>
-            <TextField
-              size="small"
-              label="Navn på borettslag"
-              value={groupName}
-              onChange={(event) => {
-                setGroupName(event.target.value);
-              }}
-            />
-            <TextField size="small" label="Adresse" />
-          </FormControl>
+        <CardContent
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "0.5rem",
+          }}
+        >
+          <TextField
+            size="small"
+            label="Navn på borettslag"
+            value={groupName}
+            onChange={(event) => {
+              setGroupName(event.target.value);
+            }}
+            sx={{
+              width: "100%",
+            }}
+          />
+          <TextField
+            size="small"
+            label="Adresse"
+            sx={{
+              width: "100%",
+            }}
+          />
         </CardContent>
         <Button
           onClick={handleCreateGroup}

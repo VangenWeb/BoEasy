@@ -41,7 +41,7 @@ export default function Home() {
             router.push("/group/create").catch(potentialErrorHandling);
           }}
         >
-          Create Group
+          Lag gruppe
         </Button>
       </PageWrapper>
     );
