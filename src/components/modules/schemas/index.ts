@@ -1,3 +1,4 @@
 export * from "./CreateSchemaDialog";
-export * from "./FolderRow";
-export * from "./SchemaRow";
+export * from "./components/FolderRow";
+export * from "./components/SchemaRow";
+export * from "./types";

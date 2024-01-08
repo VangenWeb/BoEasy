@@ -77,7 +77,7 @@ interface CreateSchemaProps {
   handleClose: () => void;
 }
 
-export const CreateSchema: React.FC<CreateSchemaProps> = ({
+export const CreateSchemaDialog: React.FC<CreateSchemaProps> = ({
   groupId,
   parentId,
   parentName,

@@ -20,12 +20,14 @@ const MyApp: AppType<{ session: Session | null }> = ({
   const router = useRouter();
   const [currentGroup, setCurrentGroup] = useState<string | null>(null);
 
+  /*
   useEffect(() => {
     if (!session?.user) {
       router.push("/").catch((err) => console.error(err));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session?.user]);
+  */
 
   return (
     <SessionProvider session={session}>

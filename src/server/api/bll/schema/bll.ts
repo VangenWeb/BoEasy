@@ -1,15 +1,20 @@
-import { Prisma, type Schema, type SchemaFolder } from "@prisma/client";
+import { type Prisma, type Schema, type SchemaFolder } from "@prisma/client";
 import { prisma } from "~/server/db";
 import { type AndyQuery } from "../types";
 import { userHasAdminAccess } from "../util/userHasAdminAcces";
 import { userHasBasicAccessToGroup } from "../util/userHasBasicAccessToGroup";
 import {
   type GetSchemaInput,
-  type CreateFolderInput,
   type CreateSchemaSchemaInput,
+  type UpsertSchemaDataInput,
+  SchemaDataSchema,
+  type SchemaWithSchemaData,
+} from "./types/schema";
+import {
+  type CreateFolderInput,
   type GetChildrenInput,
   type GetGroupFoldersInput,
-} from "./types";
+} from "./types/folder";
 
 export async function createFolder(input: CreateFolderInput) {
   if (!(await userHasAdminAccess(input.userId, input.groupId))) {
@@ -187,7 +192,6 @@ export async function createSchema(input: CreateSchemaSchemaInput) {
 }
 
 export async function getSchema({
-  groupId,
   schemaId,
   userId,
 }: GetSchemaInput): AndyQuery<
@@ -197,15 +201,6 @@ export async function getSchema({
     };
   }>
 > {
-  const access = await userHasBasicAccessToGroup(userId, groupId);
-
-  if (!access) {
-    return {
-      ok: false,
-      error: "User does not have access to group",
-    };
-  }
-
   const schema = await prisma.schema.findUnique({
     where: {
       id: schemaId,
@@ -219,6 +214,134 @@ export async function getSchema({
     return {
       ok: false,
       error: "Schema not found",
+    };
+  }
+
+  const access = await userHasBasicAccessToGroup(userId, schema.groupId);
+
+  if (!access) {
+    return {
+      ok: false,
+      error: "User does not have access to group",
+    };
+  }
+
+  return {
+    ok: true,
+    data: schema,
+  };
+}
+
+export async function upsertSchemaData({
+  schemaData,
+  userId,
+  groupId,
+  deliver,
+}: UpsertSchemaDataInput) {
+  const access = await userHasBasicAccessToGroup(userId, groupId);
+
+  if (!access) {
+    return {
+      ok: false,
+      error: "User does not have access to group",
+    };
+  }
+
+  const verifiedData = SchemaDataSchema.safeParse(schemaData);
+
+  if (!verifiedData.success) {
+    return {
+      ok: false,
+      error: verifiedData.error.message,
+    };
+  }
+
+  if (!schemaData.schemaDataId) {
+    const schema = await prisma.schemaData.create({
+      data: {
+        schemaId: schemaData.schemaId,
+        createdById: userId,
+        groupId: groupId,
+        data: schemaData,
+        delivered: deliver,
+      },
+    });
+
+    if (!schema) {
+      return {
+        ok: false,
+        error: "Schema not found",
+      };
+    }
+
+    return {
+      ok: true,
+      data: {
+        schemaDataId: schema.id,
+      },
+    };
+  }
+
+  const upsertedSchemaData = await prisma.schemaData.upsert({
+    where: {
+      id: schemaData.schemaDataId,
+    },
+    update: {
+      data: JSON.stringify(schemaData),
+    },
+    create: {
+      data: JSON.stringify(schemaData),
+      schemaId: schemaData.schemaId,
+      createdById: userId,
+      groupId: groupId,
+    },
+  });
+
+  if (!upsertedSchemaData) {
+    return {
+      ok: false,
+      error: "Schema data not created",
+    };
+  }
+
+  return {
+    ok: true,
+    data: {
+      schemaDataId: upsertedSchemaData.id,
+    },
+  };
+}
+
+export async function getSchemaWithSchemaData({
+  schemaId,
+  userId,
+}: GetSchemaInput): AndyQuery<SchemaWithSchemaData> {
+  const schema = await prisma.schema.findUnique({
+    where: {
+      id: schemaId,
+    },
+    include: {
+      data: {
+        include: {
+          createdBy: true,
+        },
+      },
+    },
+  });
+
+  if (!schema) {
+    return {
+      ok: false,
+      error: "Schema not found",
+    };
+  }
+
+  const access = await userHasBasicAccessToGroup(userId, schema.groupId);
+
+  if (!access) {
+    return {
+      ok: false,
+      error: "User does not have access to group",
     };
   }
 

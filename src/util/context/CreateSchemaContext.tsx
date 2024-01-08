@@ -105,12 +105,12 @@ export const CreateSchemaContextProvider: React.CFC<
   function addField(type: FieldType, name: string) {
     if (!!schema) {
       if (!name || name === "") {
-        createSnack("Feltet må fylles ut", "error");
+        createSnack({ message: "Feltet må fylles ut", type: "error" });
         return;
       }
       const newSchema: Schema = { ...schema };
       if (newSchema.fields.some((field) => field.name === name)) {
-        createSnack("Feltet finnes allerede", "error");
+        createSnack({ message: "Feltet finnes allerede", type: "error" });
         return;
       }
       newSchema.fields.push({ type, name });

@@ -10,8 +10,9 @@ interface UseSnackProps {
 /**
  * I wanted to make a hook for this since I didn't want to have to make the logic for this every time.
  * Initially I wanted to make something that would only return the createSnack function. But that would
- * require me to have a component to render it in, somewhere higher up in the hierarchy. And I decided
- * I didn't want to rerender a high hierarchy component to show a snack.
+ * require me to have a component to render it in somewhere higher up in the hierarchy. And I decided
+ * I didn't want to rerender a high hierarchy component to show a snack. Might just attach it to .root
+ * That might work without re-rendering?
  */
 export function useSnack({ autoHideDuration, anchorOrigin }: UseSnackProps) {
   const [open, setOpen] = useState(false);
@@ -21,7 +22,13 @@ export function useSnack({ autoHideDuration, anchorOrigin }: UseSnackProps) {
     setOpen(false);
   }
 
-  function createSnack(message: string, type: SnackType) {
+  function createSnack({
+    message,
+    type,
+  }: {
+    message: string;
+    type: SnackType;
+  }) {
     setSnack(
       <Alert onClose={handleClose} severity={type}>
         {message}

@@ -13,7 +13,7 @@ import SchemaRow from "./SchemaRow";
 import SettingsApplicationsIcon from "@mui/icons-material/SettingsApplications";
 import { IconMenu } from "~/components/Menu";
 import { useDialog } from "~/util/hooks";
-import { CreateSchema } from "./CreateSchemaDialog";
+import { CreateSchemaDialog } from "../CreateSchemaDialog";
 import { CreateSchemaContextProvider } from "~/util/context/CreateSchemaContext";
 import { useSnack } from "~/util/hooks/useSnack";
 
@@ -61,7 +61,7 @@ const FolderRow: React.FC<SchemaFolder> = (folder) => {
   const { DialogComponent, toggle: toggleCreateSchema } = useDialog({
     fullscreen: true,
     dialogContent: (
-      <CreateSchema
+      <CreateSchemaDialog
         groupId={folder.groupId}
         parentId={folder.id}
         parentName={folder.name}
@@ -131,7 +131,7 @@ const FolderRow: React.FC<SchemaFolder> = (folder) => {
     void refetchChildrenFolders().catch((err) => console.error(err));
     handleCloseMenu();
     handleCloseCreateSchemaDialog();
-    createSnack("Skjema opprettet", "success");
+    createSnack({ message: "Skjema opprettet", type: "success" });
   }
 
   return (

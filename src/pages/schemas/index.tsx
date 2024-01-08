@@ -1,8 +1,9 @@
 import styled from "@emotion/styled";
 import CreateNewFolderIcon from "@mui/icons-material/CreateNewFolder";
+import { CircularProgress } from "@mui/material";
 import { IconButton as BaseIconButton, PageWrapper } from "~/components";
-import FolderRow from "~/components/modules/schemas/FolderRow";
-import SchemaRow from "~/components/modules/schemas/SchemaRow";
+import FolderRow from "~/components/modules/schemas/components/FolderRow";
+import SchemaRow from "~/components/modules/schemas/components/SchemaRow";
 import { useGroup } from "~/util/hooks";
 import { api } from "~/utils/api";
 
@@ -23,7 +24,6 @@ const ActionWrapper = styled.div`
 // But as I am making this right now its easy, its fast, and at the moment I am only after making something that works as a demo.
 // TODO: Make this non-recursive on the front-end and have the entire file system be fetched once.
 export default function Schemas() {
-  console.log("Schemas Rendered");
   const group = useGroup();
   const { data: children, refetch: refetchFolders } =
     api.schema.getChildren.useQuery(
@@ -35,12 +35,13 @@ export default function Schemas() {
         enabled: !!group,
       },
     );
-  const { mutate } = api.schema.createFolder.useMutation();
+  const { mutate, isLoading } = api.schema.createFolder.useMutation();
 
   function handleCreateFolder(parentId: string | null) {
     return () => {
       if (!group) {
         // Add error handling
+        console.log("NO GROUP DUDE");
         return;
       }
       const name = prompt("Mappe navn?");
@@ -66,8 +67,15 @@ export default function Schemas() {
     <PageWrapper>
       <Wrapper>
         <ActionWrapper>
-          <CreateFolderButton onClick={handleCreateFolder(null)}>
-            <CreateNewFolderIcon />
+          <CreateFolderButton
+            onClick={handleCreateFolder(null)}
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              <CircularProgress size="1.5rem" />
+            ) : (
+              <CreateNewFolderIcon />
+            )}
           </CreateFolderButton>
         </ActionWrapper>
         {children?.ok &&

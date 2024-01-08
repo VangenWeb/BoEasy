@@ -5,10 +5,14 @@ import NoteAltIcon from "@mui/icons-material/NoteAlt";
 import SettingsApplicationsIcon from "@mui/icons-material/SettingsApplications";
 import { IconButton } from "@mui/material";
 import { type Schema } from "@prisma/client";
-import { useRef, useState } from "react";
+import { ChangeEvent, useMemo, useRef, useState } from "react";
 import { IconMenu } from "~/components/Menu";
 import { useDialog } from "~/util/hooks";
-import { FillSchemaDialog } from "./FillSchemaDialog";
+import { FillSchemaDialog } from "../FillSchemaDialog";
+import { FillSchemaContextProvider } from "~/util/context/FillSchemaContext";
+import { useSnack } from "~/util/hooks/useSnack";
+import { useRouter } from "next/router";
+import { potentialErrorHandling } from "~/util/potentialErrorHandling";
 
 const Wrapper = styled.div`
   display: flex;
@@ -29,18 +33,34 @@ const NameContainer = styled.div`
 const SchemaRow: React.FC<Schema> = (schema) => {
   const menuAnchor = useRef<HTMLButtonElement>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-
+  const router = useRouter();
   const { DialogComponent, closeDialog, openDialog } = useDialog({
     fullscreen: true,
     dialogContent: (
       <FillSchemaDialog
-        schema={schema}
-        origin="new"
         schemaId={schema.id}
-        handleClose={handleCloseSchemaDialog}
+        onClose={handleCloseSchemaDialog}
+        onSave={handleSchemaSaved}
       />
     ),
   });
+
+  const { SnackComponent, createSnack } = useSnack({
+    autoHideDuration: 3000,
+    anchorOrigin: {
+      vertical: "bottom",
+      horizontal: "center",
+    },
+  });
+
+  function handleSchemaSaved() {
+    createSnack({
+      message: "Skjema lagret",
+      type: "success",
+    });
+  }
+
+  const Dialog = useMemo(() => <DialogComponent />, [DialogComponent]);
 
   function handleOpenSchemaDialog() {
     openDialog();
@@ -56,6 +76,14 @@ const SchemaRow: React.FC<Schema> = (schema) => {
 
   function handleCloseMenu() {
     setIsMenuOpen(false);
+  }
+
+  function handleGoToSchemaData(id: string) {
+    return () => {
+      router
+        .push(`/schemas/${id}`)
+        .catch((err: Error) => potentialErrorHandling(err));
+    };
   }
   return (
     <Wrapper>
@@ -79,7 +107,7 @@ const SchemaRow: React.FC<Schema> = (schema) => {
             type: "item",
             text: "Se tidligere utfylte skjemaer",
             icon: <ArticleIcon />,
-            onClick: () => void 0,
+            onClick: handleGoToSchemaData(schema.id),
           },
           {
             type: "divider",
@@ -95,7 +123,8 @@ const SchemaRow: React.FC<Schema> = (schema) => {
         open={isMenuOpen}
         handleClose={handleCloseMenu}
       />
-      <DialogComponent />
+      <FillSchemaContextProvider>{Dialog}</FillSchemaContextProvider>
+      <SnackComponent />
     </Wrapper>
   );
 };
