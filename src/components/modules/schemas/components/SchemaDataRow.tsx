@@ -3,6 +3,7 @@ import { IconButton } from "@mui/material";
 import { type SchemaDataWithUser } from "~/server/api/bll/schema/types/schema";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import SettingsApplicationsIcon from "@mui/icons-material/SettingsApplications";
+import Link from "next/link";
 
 const Wrapper = styled.div`
   display: flex;
@@ -32,7 +33,9 @@ export const SchemaDataRow: React.FC<SchemaDataWithUser> = (schemaData) => {
             marginLeft: "auto",
           }}
         >
-          <OpenInNewIcon />
+          <Link href={`/schemas/view/${schemaData.id}`}>
+            <OpenInNewIcon />
+          </Link>
         </IconButton>
       </Row>
       <Row>

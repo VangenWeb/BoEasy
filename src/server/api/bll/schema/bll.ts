@@ -9,6 +9,9 @@ import {
   type UpsertSchemaDataInput,
   SchemaDataSchema,
   type SchemaWithSchemaData,
+  GetSchemaDataInput,
+  SchemaDataWithUser,
+  GetSchemaDataReturn,
 } from "./types/schema";
 import {
   type CreateFolderInput,
@@ -333,6 +336,42 @@ export async function getSchemaWithSchemaData({
     return {
       ok: false,
       error: "Schema not found",
+    };
+  }
+
+  const access = await userHasBasicAccessToGroup(userId, schema.groupId);
+
+  if (!access) {
+    return {
+      ok: false,
+      error: "User does not have access to group",
+    };
+  }
+
+  return {
+    ok: true,
+    data: schema,
+  };
+}
+
+export async function getSchemaData({
+  schemaDataId,
+  userId,
+}: GetSchemaDataInput): AndyQuery<GetSchemaDataReturn> {
+  const schema = await prisma.schemaData.findUnique({
+    where: {
+      id: schemaDataId,
+    },
+    include: {
+      createdBy: true,
+      schema: true,
+    },
+  });
+
+  if (!schema) {
+    return {
+      ok: false,
+      error: "Schema data not found",
     };
   }
 
