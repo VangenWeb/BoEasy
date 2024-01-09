@@ -19,12 +19,22 @@ import {
   type SchemaAudience,
   type SchemaRecurrence,
 } from "@prisma/client";
-import { useContext, useState } from "react";
+import { ReactNode, useContext, useState } from "react";
 import { IconButton } from "~/components/Button";
 import { ConfirmDialog } from "~/components/Dialog";
 import { CreateSchemaContext } from "~/util/context/CreateSchemaContext";
 import { useDialog } from "~/util/hooks";
 import { getFieldRowIcon } from "./util";
+import {
+  DragDropContext,
+  Droppable,
+  Draggable,
+  Announce,
+  DropResult,
+} from "react-beautiful-dnd";
+import { onChange } from "~/util/dndUtils";
+import { XDrop } from "~/components/DragAndDrop/Drop";
+import { XDrag } from "~/components/DragAndDrop/Drag";
 
 const Wrapper = styled.div`
   position: relative;
@@ -94,6 +104,7 @@ export const CreateSchemaDialog: React.FC<CreateSchemaProps> = ({
     removeField,
     resetSchema,
     createSchema,
+    setSchema,
   } = useContext(CreateSchemaContext);
 
   const [dialogContent, setDialogContent] = useState<JSX.Element | null>(null);
@@ -167,6 +178,26 @@ export const CreateSchemaDialog: React.FC<CreateSchemaProps> = ({
 
     createSchema(groupId, parentId);
   }
+
+  const onDragEnd = (res: DropResult) => {
+    const { source, destination, draggableId } = res;
+    if (!destination) return;
+    if (onChange(source, destination)) return;
+    if (!schema?.fields) return;
+
+    const newFields = [...schema?.fields];
+    const draggedField = newFields[source.index];
+
+    if (!draggedField) return;
+
+    newFields.splice(source.index, 1);
+    newFields.splice(destination.index, 0, draggedField);
+
+    setSchema({
+      ...schema,
+      fields: newFields,
+    });
+  };
 
   return (
     <Wrapper>
@@ -250,23 +281,33 @@ export const CreateSchemaDialog: React.FC<CreateSchemaProps> = ({
             >
               <MenuItem value={"text"}>Text</MenuItem>
               <MenuItem value={"checkbox"}>Checkbox</MenuItem>
+              <MenuItem value={"title"}>Tittel</MenuItem>
             </Select>
           </FormControl>
           <Button onClick={handleAddField} variant="contained">
             Legg til felt
           </Button>
-          <FieldContainer>
-            {schema?.fields.map((field, index) => (
-              <FieldRow key={field.name}>
-                <IconButton size="small" onClick={handleRemoveField(index)}>
-                  <DeleteIcon />
-                </IconButton>
-                {getFieldRowIcon(field.type)}
+          <DragDropContext onDragEnd={onDragEnd}>
+            <XDrop droppableId={"ALL-FIELDS"} type="FIELD" direction="vertical">
+              {schema?.fields.map((field, index) => (
+                <XDrag
+                  draggableId={field.name}
+                  index={index}
+                  key={field.name + "2"}
+                  className="field-drop"
+                >
+                  <FieldRow id={field.name} key={index} className="FIELD">
+                    <IconButton size="small" onClick={handleRemoveField(index)}>
+                      <DeleteIcon />
+                    </IconButton>
+                    {getFieldRowIcon(field.type)}
+                    <p>{field.name}</p>
+                  </FieldRow>
+                </XDrag>
+              ))}
+            </XDrop>
+          </DragDropContext>
 
-                <p>{field.name}</p>
-              </FieldRow>
-            ))}
-          </FieldContainer>
           <Button
             variant="contained"
             disabled={isCreating}
