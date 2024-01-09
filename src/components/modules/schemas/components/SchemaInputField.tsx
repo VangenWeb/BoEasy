@@ -13,6 +13,14 @@ const Wrapper = styled.div<WrapperProps>`
   gap: 0.5rem;
 `;
 
+const TitleWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+
+  border-bottom: 1px solid black;
+`;
+
 const CheckboxWrapper = styled.div`
   display: flex;
   flex-direction: row;
@@ -30,6 +38,14 @@ export const SchemaInputField: React.FC<SchemaInputFieldProps> = ({
   field,
   onChange,
 }) => {
+  if (field.type === "title") {
+    return (
+      <TitleWrapper>
+        <Typography variant="h5">{field.name}</Typography>
+      </TitleWrapper>
+    );
+  }
+
   if (field.type === "checkbox") {
     return (
       <Wrapper isCheckbox={true}>

@@ -63,20 +63,29 @@ export const FillSchemaContextProvider: React.CFC = ({ children }) => {
     setSchemaLoaded(true);
 
     const fields: SchemaDataFieldObject[] = schema.fields.map((field) => {
-      if (field.type === "text") {
-        return {
-          id: field.id,
-          type: "text",
-          name: field.name,
-          answer: "",
-        };
-      } else {
-        return {
-          id: field.id,
-          type: "checkbox",
-          name: field.name,
-          answer: false,
-        };
+      switch (field.type) {
+        case "checkbox":
+          return {
+            id: field.id,
+            type: "checkbox",
+            name: field.name,
+            answer: false,
+          };
+        case "title":
+          return {
+            id: field.id,
+            type: "title",
+            name: field.name,
+            answer: "",
+          };
+        default: {
+          return {
+            id: field.id,
+            type: "text",
+            name: field.name,
+            answer: "",
+          };
+        }
       }
     });
 

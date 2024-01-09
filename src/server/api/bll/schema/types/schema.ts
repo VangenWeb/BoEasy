@@ -1,7 +1,7 @@
 import { Prisma } from "@prisma/client";
 import { z } from "zod";
 
-export const FieldTypeSchema = z.enum(["text", "checkbox", "number"]);
+export const FieldTypeSchema = z.enum(["text", "checkbox", "number", "title"]);
 
 export const FieldsSchema = z.object({
   name: z.string(),
@@ -47,9 +47,16 @@ export const CheckboxFieldSchema = z.object({
   answer: z.boolean(),
 });
 
+export const TitleFieldSchema = z.object({
+  id: z.string(),
+  type: z.literal("title"),
+  name: z.string(),
+});
+
 export const SchemaDataFieldSchema = z.discriminatedUnion("type", [
   TextFieldSchema,
   CheckboxFieldSchema,
+  TitleFieldSchema,
 ]);
 
 export const SchemaDataSchema = z.object({

@@ -16,6 +16,13 @@ interface FieldRowProps {
 }
 
 export const FieldRow: React.FC<FieldRowProps> = ({ field }) => {
+  if (field.type === "title") {
+    return (
+      <Wrapper>
+        <Typography variant="h5">{field.name}</Typography>
+      </Wrapper>
+    );
+  }
   if (field.type === "checkbox") {
     return (
       <Wrapper>
@@ -24,6 +31,7 @@ export const FieldRow: React.FC<FieldRowProps> = ({ field }) => {
       </Wrapper>
     );
   }
+
   return (
     <Wrapper>
       <Typography variant="h6">{field.name}</Typography>

@@ -188,4 +188,5 @@ enum FieldType {
   text
   number
   checkbox
+  title
 }

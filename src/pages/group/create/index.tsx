@@ -9,6 +9,7 @@ import {
   FormControl,
   TextField,
 } from "@mui/material";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { PageWrapper as BasePageWrapper } from "~/components";
@@ -23,10 +24,12 @@ const PageWrapper = styled(BasePageWrapper)`
 
 export default function CreateGroup() {
   const router = useRouter();
+  const session = useSession();
   const [groupName, setGroupName] = useState("");
 
   const { mutate, isLoading } = api.group.createPrimaryGroup.useMutation({
     onSuccess: () => {
+      session.update().catch((err) => console.error(err));
       router.push("/home").catch((err) => console.error(err));
     },
   });
