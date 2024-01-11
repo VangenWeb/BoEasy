@@ -5,20 +5,16 @@ import { SessionProvider } from "next-auth/react";
 import { type AppType } from "next/app";
 import { api } from "~/utils/api";
 
-import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
 import { Layout } from "~/components/modules";
 import "~/styles/globals.css";
 import ThemeRegistry from "~/theme/ThemeRegistry";
-import { CurrentGroupContext } from "~/util/context/CurrentGroupContext";
+import { CurrentGroupProvider } from "~/util/context/CurrentGroupContext";
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
   pageProps: { session, ...pageProps },
 }) => {
   console.log("App Rendered");
-  const router = useRouter();
-  const [currentGroup, setCurrentGroup] = useState<string | null>(null);
 
   /*
   useEffect(() => {
@@ -33,13 +29,11 @@ const MyApp: AppType<{ session: Session | null }> = ({
     <SessionProvider session={session}>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <ThemeRegistry>
-          <CurrentGroupContext.Provider
-            value={{ currentGroup, setCurrentGroup }}
-          >
+          <CurrentGroupProvider>
             <Layout>
               <Component {...pageProps} />
             </Layout>
-          </CurrentGroupContext.Provider>
+          </CurrentGroupProvider>
         </ThemeRegistry>
       </LocalizationProvider>
     </SessionProvider>
