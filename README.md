@@ -11,4 +11,9 @@ Mye som lages er tanker/testing av hvordan ting kan gjøres. IE. global vs local
 For å sette opp:
 1: add .env variabler som .env.example.
 a: Auth0 trenger api/client keys
+
 2: enten mekk en psql/mysql database og koble opp den eller endre provider engine til sqlite i prisma/schema.prisma. Skal funke out of the box, kan hende man må fjerne no annotations for MySQL/Postgres
+
+3: TinyMCE trenger api key, skal legge dette til .env senere. Men per nå ligger det i Editor komponenten hardkodet.
+
+4: yarn dev, burde være ready to go
