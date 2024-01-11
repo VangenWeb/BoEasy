@@ -9,6 +9,7 @@ import { Layout } from "~/components/modules";
 import "~/styles/globals.css";
 import ThemeRegistry from "~/theme/ThemeRegistry";
 import { CurrentGroupProvider } from "~/util/context/CurrentGroupContext";
+import { SnackProvider } from "~/util/context/SnackContext";
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
@@ -30,9 +31,11 @@ const MyApp: AppType<{ session: Session | null }> = ({
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <ThemeRegistry>
           <CurrentGroupProvider>
-            <Layout>
-              <Component {...pageProps} />
-            </Layout>
+            <SnackProvider>
+              <Layout>
+                <Component {...pageProps} />
+              </Layout>
+            </SnackProvider>
           </CurrentGroupProvider>
         </ThemeRegistry>
       </LocalizationProvider>

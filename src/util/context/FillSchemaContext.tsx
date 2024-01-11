@@ -1,10 +1,9 @@
-import { type Schema } from "@prisma/client";
 import { createContext, useState } from "react";
+import { type SchemaWithFields } from "~/components/modules/schemas";
 import {
   type SchemaDataFieldObject,
   type SchemaDataObject,
-} from "~/server/api/bll/schema/types/schema";
-import { type SchemaWithFields } from "~/components/modules/schemas";
+} from "~/server/api/bll/files/types/schema";
 import { api } from "~/utils/api";
 
 interface CurrentFillShchemaContextProps {

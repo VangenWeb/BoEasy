@@ -1,23 +1,27 @@
 import { type Prisma, type Schema, type SchemaFolder } from "@prisma/client";
+import { TRPCError } from "@trpc/server";
 import { prisma } from "~/server/db";
 import { type AndyQuery } from "../types";
 import { userHasAdminAccess } from "../util/userHasAdminAcces";
 import { userHasBasicAccessToGroup } from "../util/userHasBasicAccessToGroup";
 import {
-  type GetSchemaInput,
-  type CreateSchemaSchemaInput,
-  type UpsertSchemaDataInput,
-  SchemaDataSchema,
-  type SchemaWithSchemaData,
-  GetSchemaDataInput,
-  SchemaDataWithUser,
-  GetSchemaDataReturn,
-} from "./types/schema";
-import {
   type CreateFolderInput,
   type GetChildrenInput,
   type GetGroupFoldersInput,
 } from "./types/folder";
+import {
+  SchemaDataSchema,
+  type CreateSchemaSchemaInput,
+  type GetSchemaDataInput,
+  type GetSchemaDataReturn,
+  type GetSchemaInput,
+  type SchemaWithSchemaData,
+  type UpsertSchemaDataInput,
+} from "./types/schema";
+import {
+  type CreateTextFileInput,
+  CreateTextFileSchema,
+} from "./types/textFile";
 
 export async function createFolder(input: CreateFolderInput) {
   if (!(await userHasAdminAccess(input.userId, input.groupId))) {
@@ -387,5 +391,47 @@ export async function getSchemaData({
   return {
     ok: true,
     data: schema,
+  };
+}
+
+export async function createTextFile(
+  textFile: CreateTextFileInput,
+): AndyQuery<null> {
+  const access = await userHasBasicAccessToGroup(
+    textFile.createdById,
+    textFile.groupId,
+  );
+  if (!access) {
+    return { ok: false, error: "User does not have access to group" };
+  }
+
+  const verifiedData = CreateTextFileSchema.safeParse(textFile);
+
+  if (!verifiedData.success) {
+    throw new TRPCError({
+      code: "BAD_REQUEST",
+      message: verifiedData.error.message,
+    }); //return { ok: false, error: verifiedData.error.message };
+  }
+
+  const file = await prisma.textFile.create({
+    data: {
+      name: textFile.name,
+      content: textFile.content,
+      groupId: textFile.groupId,
+      createdById: textFile.createdById,
+    },
+  });
+
+  if (!file) {
+    throw new TRPCError({
+      code: "BAD_REQUEST",
+      message: "File not created",
+    });
+  }
+
+  return {
+    ok: true,
+    data: null,
   };
 }

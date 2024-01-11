@@ -1,5 +1,6 @@
 import { Alert, Snackbar, type SnackbarProps } from "@mui/material";
-import { useState } from "react";
+import { useContext, useRef, useState } from "react";
+import { SnackContext } from "../context/SnackContext";
 
 type SnackType = "success" | "error" | "warning" | "info";
 
@@ -17,6 +18,8 @@ interface UseSnackProps {
 export function useSnack({ autoHideDuration, anchorOrigin }: UseSnackProps) {
   const [open, setOpen] = useState(false);
   const [snack, setSnack] = useState<JSX.Element | null>(null);
+
+  const snackRef = useRef<JSX.Element | null>(null);
 
   function handleClose() {
     setOpen(false);
@@ -54,4 +57,10 @@ export function useSnack({ autoHideDuration, anchorOrigin }: UseSnackProps) {
     createSnack,
     SnackComponent,
   };
+}
+
+export function useRootSnack() {
+  const { createSnack } = useContext(SnackContext);
+
+  return createSnack;
 }

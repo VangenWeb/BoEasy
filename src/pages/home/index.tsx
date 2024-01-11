@@ -1,13 +1,18 @@
 import { Button, CircularProgress, Typography } from "@mui/material";
+import { type Editor } from "@tinymce/tinymce-react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
+import { useRef } from "react";
 import { PageWrapper } from "~/components";
+import { RichTextEditor } from "~/components/Editor/Editor";
 import { potentialErrorHandling } from "~/util/potentialErrorHandling";
 import { api } from "~/utils/api";
 
 export default function Home() {
   const session = useSession();
   const router = useRouter();
+
+  const richTextRef = useRef<Editor | null>(null);
 
   const { data: groupData, isLoading } = api.user.getUserPrimaryGroup.useQuery(
     session.data?.user.id ?? "",
@@ -52,6 +57,7 @@ export default function Home() {
   return (
     <PageWrapper>
       <div key={group.id}>{group.name}</div>
+      <RichTextEditor ref={richTextRef} />
     </PageWrapper>
   );
 }

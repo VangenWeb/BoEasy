@@ -1,21 +1,22 @@
 import styled from "@emotion/styled";
-import ExpandLessIcon from "@mui/icons-material/ExpandLess";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import NoteAddIcon from "@mui/icons-material/NoteAdd";
-import FolderIcon from "@mui/icons-material/Folder";
 import CreateNewFolderIcon from "@mui/icons-material/CreateNewFolder";
 import DeleteIcon from "@mui/icons-material/Delete";
+import ExpandLessIcon from "@mui/icons-material/ExpandLess";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import FolderIcon from "@mui/icons-material/Folder";
+import NoteAddIcon from "@mui/icons-material/NoteAdd";
+import SettingsApplicationsIcon from "@mui/icons-material/SettingsApplications";
 import { CircularProgress, IconButton } from "@mui/material";
 import { type SchemaFolder } from "@prisma/client";
+import { useRouter } from "next/router";
 import React, { useRef, useState } from "react";
-import { api } from "~/utils/api";
-import SchemaRow from "./SchemaRow";
-import SettingsApplicationsIcon from "@mui/icons-material/SettingsApplications";
 import { IconMenu } from "~/components/Menu";
-import { useDialog } from "~/util/hooks";
-import { CreateSchemaDialog } from "../CreateSchemaDialog";
 import { CreateSchemaContextProvider } from "~/util/context/CreateSchemaContext";
+import { useDialog } from "~/util/hooks";
 import { useSnack } from "~/util/hooks/useSnack";
+import { api } from "~/utils/api";
+import { CreateSchemaDialog } from "../CreateSchemaDialog";
+import SchemaRow from "./SchemaRow";
 
 const Wrapper = styled.div`
   display: flex;
@@ -58,21 +59,14 @@ const FolderRow: React.FC<SchemaFolder> = (folder) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuAnchor = useRef<HTMLButtonElement>(null);
-  const { DialogComponent, toggle: toggleCreateSchema } = useDialog({
-    fullscreen: true,
-    dialogContent: (
-      <CreateSchemaDialog
-        groupId={folder.groupId}
-        parentId={folder.id}
-        parentName={folder.name}
-        handleClose={handleCloseCreateSchemaDialog}
-      />
-    ),
-  });
+  const router = useRouter();
+
   const { SnackComponent, createSnack } = useSnack({});
-  function handleCloseCreateSchemaDialog() {
-    toggleCreateSchema();
-  }
+  const [dialogContent, setDialogContent] = useState<JSX.Element | null>(null);
+  const { DialogComponent, closeDialog, openDialog } = useDialog({
+    fullscreen: true,
+    dialogContent: dialogContent ?? <></>,
+  });
 
   const {
     data: childrenData,
@@ -88,6 +82,28 @@ const FolderRow: React.FC<SchemaFolder> = (folder) => {
       enabled: isExpanded,
     },
   );
+
+  function handleCloseCreateSchemaDialog() {
+    closeDialog();
+  }
+
+  function handleOpenCreateSchemaDialog() {
+    setDialogContent(
+      <CreateSchemaDialog
+        groupId={folder.groupId}
+        parentId={folder.id}
+        parentName={folder.name}
+        handleClose={handleCloseCreateSchemaDialog}
+      />,
+    );
+    openDialog();
+  }
+
+  function handleCreateTextFile() {
+    router.push(`/folder/${folder.id}/create-text-file`).catch((err) => {
+      console.error(err);
+    });
+  }
 
   const { mutate } = api.schema.createFolder.useMutation();
 
@@ -174,7 +190,13 @@ const FolderRow: React.FC<SchemaFolder> = (folder) => {
             type: "item",
             text: "Opprett skjema",
             icon: <NoteAddIcon />,
-            onClick: toggleCreateSchema,
+            onClick: handleOpenCreateSchemaDialog,
+          },
+          {
+            type: "item",
+            text: "Opprett tekstfil",
+            icon: <NoteAddIcon />,
+            onClick: handleCreateTextFile,
           },
           {
             type: "divider",

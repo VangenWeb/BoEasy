@@ -1,27 +1,29 @@
 import {
   createFolder,
   createSchema,
+  createTextFile,
   getChildren,
   getGroupFolders,
   getSchema,
   getSchemaData,
   getSchemaWithSchemaData,
   upsertSchemaData,
-} from "../bll/schema/bll";
+} from "../bll/files/bll";
 import {
   CreateSchemaSchema,
   GetSchemaDataSchema,
   GetSchemaSchema,
   UpsertSchemaDataSchema,
-} from "../bll/schema/types/schema";
+} from "../bll/files/types/schema";
 import {
   CreateFolderScheme,
   GetChildrenSchema,
   GetGroupFoldersSchema,
-} from "../bll/schema/types/folder";
+} from "../bll/files/types/folder";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
+import { CreateTextFileSchema } from "../bll/files/types/textFile";
 
-export const schemaRouter = createTRPCRouter({
+export const filesRouter = createTRPCRouter({
   createFolder: protectedProcedure
     .input(CreateFolderScheme.omit({ userId: true }))
     .mutation(({ input, ctx }) =>
@@ -62,5 +64,12 @@ export const schemaRouter = createTRPCRouter({
     .input(GetChildrenSchema.omit({ userId: true }))
     .query(({ input, ctx }) =>
       getChildren({ ...input, userId: ctx.session.user.id }),
+    ),
+
+  // TextFile
+  createTextFile: protectedProcedure
+    .input(CreateTextFileSchema.omit({ createdById: true }))
+    .mutation(({ input, ctx }) =>
+      createTextFile({ ...input, createdById: ctx.session.user.id }),
     ),
 });
