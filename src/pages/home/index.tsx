@@ -12,8 +12,6 @@ export default function Home() {
   const session = useSession();
   const router = useRouter();
 
-  const richTextRef = useRef<Editor | null>(null);
-
   const { data: groupData, isLoading } = api.user.getUserPrimaryGroup.useQuery(
     session.data?.user.id ?? "",
     {
@@ -57,7 +55,6 @@ export default function Home() {
   return (
     <PageWrapper>
       <div key={group.id}>{group.name}</div>
-      <RichTextEditor ref={richTextRef} />
     </PageWrapper>
   );
 }

@@ -17,6 +17,7 @@ const ActionWrapper = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: flex-end;
+  padding: 0.5rem 0;
   gap: 0.5rem;
 `;
 
@@ -35,6 +36,7 @@ export default function Schemas() {
         enabled: !!group,
       },
     );
+
   const { mutate, isLoading } = api.schema.createFolder.useMutation();
 
   function handleCreateFolder(parentId: string | null) {

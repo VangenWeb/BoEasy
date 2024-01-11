@@ -5,3 +5,7 @@
 .tox-notification--warning {
   display: none !important;
 }
+
+* {
+  min-width: 0;
+}

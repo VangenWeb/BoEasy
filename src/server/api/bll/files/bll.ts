@@ -1,4 +1,9 @@
-import { type Prisma, type Schema, type SchemaFolder } from "@prisma/client";
+import {
+  TextFile,
+  type Prisma,
+  type Schema,
+  type SchemaFolder,
+} from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { prisma } from "~/server/db";
 import { type AndyQuery } from "../types";
@@ -120,6 +125,7 @@ export async function getChildren({
 }: GetChildrenInput): AndyQuery<{
   folders: SchemaFolder[];
   schemas: Schema[];
+  files: TextFile[];
 }> {
   if (!(await userHasBasicAccessToGroup(userId, groupId))) {
     return {
@@ -142,11 +148,19 @@ export async function getChildren({
     },
   });
 
+  const files = await prisma.textFile.findMany({
+    where: {
+      groupId: groupId,
+      parentFolderId: parentId,
+    },
+  });
+
   return {
     ok: true,
     data: {
-      folders,
-      schemas,
+      folders: folders ?? [],
+      schemas: schemas ?? [],
+      files: files ?? [],
     },
   };
 }
@@ -420,6 +434,7 @@ export async function createTextFile(
       content: textFile.content,
       groupId: textFile.groupId,
       createdById: textFile.createdById,
+      parentFolderId: textFile.parentFolderId,
     },
   });
 

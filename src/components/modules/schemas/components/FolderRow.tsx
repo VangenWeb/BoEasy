@@ -17,6 +17,7 @@ import { useSnack } from "~/util/hooks/useSnack";
 import { api } from "~/utils/api";
 import { CreateSchemaDialog } from "../CreateSchemaDialog";
 import SchemaRow from "./SchemaRow";
+import { TextFileRow } from "./TextFileRow";
 
 const Wrapper = styled.div`
   display: flex;
@@ -176,6 +177,10 @@ const FolderRow: React.FC<SchemaFolder> = (folder) => {
             childrenData.data.schemas.map((schema) => {
               return <SchemaRow key={schema.id} {...schema} />;
             })}
+          {childrenData?.ok &&
+            childrenData.data?.files.map((file) => (
+              <TextFileRow key={file.id} {...file} />
+            ))}
         </FolderWrapper>
       )}
       <IconMenu

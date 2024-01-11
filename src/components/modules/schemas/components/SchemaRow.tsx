@@ -6,6 +6,7 @@ import SettingsApplicationsIcon from "@mui/icons-material/SettingsApplications";
 import { IconButton } from "@mui/material";
 import { type Schema } from "@prisma/client";
 import { ChangeEvent, useMemo, useRef, useState } from "react";
+import AssignmentIcon from "@mui/icons-material/Assignment";
 import { IconMenu } from "~/components/Menu";
 import { useDialog } from "~/util/hooks";
 import { FillSchemaDialog } from "../FillSchemaDialog";
@@ -88,7 +89,7 @@ const SchemaRow: React.FC<Schema> = (schema) => {
   return (
     <Wrapper>
       <NameContainer>
-        <ArticleIcon />
+        <AssignmentIcon />
         <div>{schema.name}</div>
       </NameContainer>
       <IconButton ref={menuAnchor} onClick={handleOpenMenu}>

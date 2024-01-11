@@ -7,6 +7,7 @@ import { useContext, useRef, useState } from "react";
 import { IconButton } from "~/components/Button";
 import { ConfirmDialog } from "~/components/Dialog";
 import { RichTextEditor } from "~/components/Editor/Editor";
+import { getEditorContent } from "~/components/Editor/util";
 import { CurrentGroupContext } from "~/util/context/CurrentGroupContext";
 import { useDialog } from "~/util/hooks";
 import { useRootSnack } from "~/util/hooks/useSnack";
@@ -53,6 +54,7 @@ export default function RichTextDialog() {
   const group = useContext(CurrentGroupContext);
   const createSnack = useRootSnack();
   const [dialogContent, setDialogContent] = useState<JSX.Element | null>(null);
+  const [fileName, setFileName] = useState<string>("");
 
   const {
     DialogComponent,
@@ -68,9 +70,10 @@ export default function RichTextDialog() {
   function handleCloseRichTextDialog() {
     setDialogContent(
       <ConfirmDialog
-        title="Lukk tekst editor?"
+        title="Lukk dokument?"
+        description="Dokumentet vil ikke bli lagret"
         onConfirm={() => {
-          console.log("Yeet");
+          router.back();
         }}
         onDecline={closeConfirm}
       />,
@@ -95,13 +98,22 @@ export default function RichTextDialog() {
   function handleSubmitRichText() {
     if (!router.query.id) return;
     if (!group.currentGroup) return;
+    const editorContent = getEditorContent(richTextRef);
+
+    if (!editorContent) {
+      createSnack({
+        message: "Ingen tekst i dokumentet",
+        severity: "error",
+      });
+      return;
+    }
 
     createTextFile(
       {
         parentFolderId: router.query.id as string,
         groupId: group.currentGroup,
-        name: "test",
-        content: "test",
+        name: fileName,
+        content: editorContent,
       },
       {
         onSuccess: () => {
@@ -132,6 +144,8 @@ export default function RichTextDialog() {
       </TitleContainer>
       <TextField
         sx={{}}
+        value={fileName}
+        onChange={(e) => setFileName(e.target.value)}
         placeholder="Info skriv om Harrys hårete legger"
       ></TextField>
       <RichTextEditor ref={richTextRef} />
