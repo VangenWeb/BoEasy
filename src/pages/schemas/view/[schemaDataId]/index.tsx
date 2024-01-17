@@ -1,15 +1,9 @@
 import styled from "@emotion/styled";
-import {
-  Checkbox,
-  CircularProgress,
-  FormControlLabel,
-  Typography,
-} from "@mui/material";
+import { CircularProgress, Typography } from "@mui/material";
 import { useRouter } from "next/router";
 import { useMemo, useState } from "react";
 import { FieldRow } from "~/components/modules/schemas/components/FieldRow";
-import { SchemaDataRow } from "~/components/modules/schemas/components/SchemaDataRow";
-import { SchemaDataSchema } from "~/server/api/bll/schema/types/schema";
+import { SchemaDataSchema } from "~/server/api/bll/files/types/schema";
 import { api } from "~/utils/api";
 
 const CenterWrapper = styled.div`
