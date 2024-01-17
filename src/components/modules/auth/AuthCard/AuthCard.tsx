@@ -1,7 +1,6 @@
 import { Button, Card, CardContent, styled } from "@mui/material";
-import { signIn, useSession } from "next-auth/react";
-import { useRouter } from "next/router";
-import { useEffect } from "react";
+import { CommonProps } from "@mui/material/OverridableComponent";
+import { signIn } from "next-auth/react";
 
 const ContentWrapper = styled("div")(() => ({
   display: "flex",
@@ -9,10 +8,7 @@ const ContentWrapper = styled("div")(() => ({
   gap: "0.5rem",
 }));
 
-export const AuthCard: React.FC = ({}) => {
-  const session = useSession();
-  const router = useRouter();
-
+export const AuthCard: React.FC<CommonProps> = ({ className }) => {
   function handleLogin() {
     signIn("auth0", {
       redirect: true,
@@ -20,15 +16,10 @@ export const AuthCard: React.FC = ({}) => {
     }).catch((err) => console.warn(err));
   }
 
-  useEffect(() => {
-    if (session.status === "authenticated") {
-      router.push("/home").catch((err) => console.warn(err));
-    }
-  }, [router, session.status]);
-
   return (
     <Card
       variant="outlined"
+      className={className}
       sx={{
         display: "flex",
         flexDirection: "column",

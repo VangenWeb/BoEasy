@@ -5,6 +5,7 @@ const Content = styled.div`
   flex: 1;
   overflow-x: visible;
   overflow-y: auto;
+  max-height: 100vh;
 `;
 
 export const PageWrapper: React.CFC<CommonProps> = ({ children, ...props }) => {
