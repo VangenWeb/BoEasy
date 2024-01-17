@@ -1,12 +1,10 @@
-import React, { useContext, useEffect, useLayoutEffect } from "react";
-import { Header } from "../Header/Header";
+import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import { useSession } from "next-auth/react";
-import { AuthHeader } from "../Header/AuthHeader";
-import { CurrentGroupContext } from "~/util/context/CurrentGroupContext";
-import { redirect } from "next/navigation";
 import { useRouter } from "next/router";
-import { css } from "@emotion/react";
+import React, { useContext, useEffect } from "react";
+import { CurrentGroupContext } from "~/util/context/CurrentGroupContext";
+import { AuthHeader } from "../Header/AuthHeader";
 
 interface LayoutProps {
   authenticated?: boolean;
@@ -54,6 +52,7 @@ export const Layout: React.CFC<LayoutProps> = ({ children }) => {
     if (session.status === "unauthenticated") {
       router.push("/").catch((err) => console.error(err));
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session.status]);
 
   return (

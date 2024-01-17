@@ -1,5 +1,4 @@
-import { Button, IconButton } from "@mui/material";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { Button } from "@mui/material";
 import { signIn } from "next-auth/react";
 
 export const RegisterSection: React.FC = () => {

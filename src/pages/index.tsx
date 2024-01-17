@@ -3,7 +3,7 @@ import Head from "next/head";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
-import { AuthCard, PageWrapper } from "~/components";
+import { PageWrapper } from "~/components";
 import { ScrollSnap } from "~/components/ScrollSnap/ScrollSnap";
 
 import { IndexSection } from "~/components/modules/frontPage";

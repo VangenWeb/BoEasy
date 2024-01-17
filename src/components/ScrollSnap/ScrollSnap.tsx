@@ -59,7 +59,9 @@ export const ScrollSnap: React.FC<ScrollSnapProps> = ({
       scrollSnapRef.current.addEventListener("scroll", handleScroll);
 
       return () => {
-        scrollSnapRef?.current?.removeEventListener("scroll", handleScroll);
+        if (scrollSnapRef?.current) {
+          scrollSnapRef?.current?.removeEventListener("scroll", handleScroll);
+        }
       };
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -71,7 +73,7 @@ export const ScrollSnap: React.FC<ScrollSnapProps> = ({
         ${className}`}
       ref={scrollSnapRef}
     >
-      <div className="gap4 absolute left-4 z-50 flex hidden flex-col">
+      <div className="gap4 absolute left-4 z-50  hidden flex-col">
         {sections.map((section, index) => (
           <div
             key={index}
