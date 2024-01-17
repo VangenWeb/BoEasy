@@ -13,11 +13,12 @@ const Wrapper = styled.div`
 
 interface RichTextEditorProps {
   initialValue?: string;
+  className?: string;
 }
 export const RichTextEditor = forwardRef<Editor, RichTextEditorProps>(
-  function RichTextComponent({ initialValue }, ref) {
+  function RichTextComponent({ initialValue, className }, ref) {
     return (
-      <Wrapper>
+      <Wrapper className={className}>
         <Editor
           ref={ref}
           apiKey="q1s6btuh4znfoym9mpgv5mybz5206ooilz327q68h7nk0no3"
@@ -31,12 +32,11 @@ export const RichTextEditor = forwardRef<Editor, RichTextEditorProps>(
             height: "100%",
             width: "100%",
             menubar: true,
+
             mobile: {
               menubar: false,
-              toolbar1: "undo redo | blocks | ",
-              toolbar2:
-                "bold italic forecolor | alignleft aligncenter alignright alignjustify",
-              toolbar3: " bullist numlist outdent indent",
+              toolbar1:
+                "undo redo | blocks | bold italic forecolor | alignleft aligncenter alignright alignjustify bullist numlist outdent indent",
             },
             plugins: [
               "advlist",

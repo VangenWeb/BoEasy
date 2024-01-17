@@ -81,7 +81,7 @@ export const FillSchemaDialog: React.FC<FillSchemaDialogProps> = ({
   } = useContext(FillSchemaContext);
 
   const { data: schema, isLoading: schemaLoading } =
-    api.schema.getSchema.useQuery(
+    api.file.getSchema.useQuery(
       {
         schemaId: schemaId,
       },

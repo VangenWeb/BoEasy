@@ -1,19 +1,19 @@
 import styled from "@emotion/styled";
 import ArticleIcon from "@mui/icons-material/Article";
+import AssignmentIcon from "@mui/icons-material/Assignment";
 import DeleteIcon from "@mui/icons-material/Delete";
 import NoteAltIcon from "@mui/icons-material/NoteAlt";
 import SettingsApplicationsIcon from "@mui/icons-material/SettingsApplications";
 import { IconButton } from "@mui/material";
 import { type Schema } from "@prisma/client";
-import { ChangeEvent, useMemo, useRef, useState } from "react";
-import AssignmentIcon from "@mui/icons-material/Assignment";
-import { IconMenu } from "~/components/Menu";
-import { useDialog } from "~/util/hooks";
-import { FillSchemaDialog } from "../FillSchemaDialog";
-import { FillSchemaContextProvider } from "~/util/context/FillSchemaContext";
-import { useSnack } from "~/util/hooks/useSnack";
 import { useRouter } from "next/router";
+import { useMemo, useRef, useState } from "react";
+import { IconMenu } from "~/components/Menu";
+import { FillSchemaContextProvider } from "~/util/context/FillSchemaContext";
+import { useDialog } from "~/util/hooks";
+import { useSnack } from "~/util/hooks/useSnack";
 import { potentialErrorHandling } from "~/util/potentialErrorHandling";
+import { FillSchemaDialog } from "../FillSchemaDialog";
 
 const Wrapper = styled.div`
   display: flex;

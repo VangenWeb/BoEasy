@@ -47,7 +47,7 @@ export const FillSchemaContextProvider: React.CFC = ({ children }) => {
   const [isSaved, setIsSaved] = useState(false);
   const [schemaLoaded, setSchemaLoaded] = useState(false);
 
-  const { mutate: saveSchemaData } = api.schema.upsertSchemaData.useMutation({
+  const { mutate: saveSchemaData } = api.file.upsertSchemaData.useMutation({
     onSuccess: (res) => {
       setSchemaData({
         ...schemaData,

@@ -13,7 +13,7 @@ export const appRouter = createTRPCRouter({
   example: exampleRouter,
   group: groupRouter,
   user: userRouter,
-  schema: filesRouter,
+  file: filesRouter,
 });
 
 // export type definition of API

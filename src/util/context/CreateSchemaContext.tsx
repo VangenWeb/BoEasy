@@ -71,7 +71,7 @@ export const CreateSchemaContextProvider: React.CFC<
   });
 
   const { mutate: createSchemaMutation, isLoading: isCreating } =
-    api.schema.createSchema.useMutation({
+    api.file.createSchema.useMutation({
       onSuccess: () => {
         if (onSuccess) onSuccess();
         resetSchema();

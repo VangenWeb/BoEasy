@@ -74,7 +74,7 @@ const FolderRow: React.FC<SchemaFolder> = (folder) => {
     refetch: refetchChildrenFolders,
     isFetching: isFetchingFolders,
     isLoading: isLoadingFolders,
-  } = api.schema.getChildren.useQuery(
+  } = api.file.getChildren.useQuery(
     {
       groupId: folder.groupId,
       parentId: folder.id,
@@ -106,7 +106,7 @@ const FolderRow: React.FC<SchemaFolder> = (folder) => {
     });
   }
 
-  const { mutate } = api.schema.createFolder.useMutation();
+  const { mutate } = api.file.createFolder.useMutation();
 
   function handleCreateFolder() {
     if (!folder.groupId) {

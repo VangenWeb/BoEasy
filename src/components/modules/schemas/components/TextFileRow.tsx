@@ -1,14 +1,13 @@
 import styled from "@emotion/styled";
+import DeleteIcon from "@mui/icons-material/Delete";
+import DescriptionIcon from "@mui/icons-material/Description";
+import SettingsApplicationsIcon from "@mui/icons-material/SettingsApplications";
+import TextFieldsIcon from "@mui/icons-material/TextFields";
 import { IconButton, Typography } from "@mui/material";
 import { type TextFile } from "@prisma/client";
-import SettingsApplicationsIcon from "@mui/icons-material/SettingsApplications";
-import DescriptionIcon from "@mui/icons-material/Description";
-import { useRef, useState } from "react";
 import { useRouter } from "next/router";
+import { useRef, useState } from "react";
 import { IconMenu } from "~/components/Menu";
-import ArticleIcon from "@mui/icons-material/Article";
-import DeleteIcon from "@mui/icons-material/Delete";
-import TextFieldsIcon from "@mui/icons-material/TextFields";
 const Wrapper = styled.div`
   display: flex;
   flex-direction: row;

@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 import { useContext, useRef, useState } from "react";
 import { IconButton } from "~/components/Button";
 import { ConfirmDialog } from "~/components/Dialog";
-import { RichTextEditor } from "~/components/Editor/Editor";
+import { RichTextEditor } from "~/components/Editor/RichTextEditor";
 import { getEditorContent } from "~/components/Editor/util";
 import { CurrentGroupContext } from "~/util/context/CurrentGroupContext";
 import { useDialog } from "~/util/hooks";
@@ -65,7 +65,7 @@ export default function RichTextDialog() {
   });
 
   const { mutate: createTextFile, isLoading } =
-    api.schema.createTextFile.useMutation();
+    api.file.createTextFile.useMutation();
 
   function handleCloseRichTextDialog() {
     setDialogContent(

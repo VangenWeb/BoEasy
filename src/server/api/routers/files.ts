@@ -7,6 +7,7 @@ import {
   getSchema,
   getSchemaData,
   getSchemaWithSchemaData,
+  getTextFile,
   upsertSchemaData,
 } from "../bll/files/bll";
 import {
@@ -21,14 +22,29 @@ import {
   GetGroupFoldersSchema,
 } from "../bll/files/types/folder";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
-import { CreateTextFileSchema } from "../bll/files/types/textFile";
+import {
+  CreateTextFileSchema,
+  GetTextFileSchema,
+} from "../bll/files/types/textFile";
 
 export const filesRouter = createTRPCRouter({
+  // FOLDERS
   createFolder: protectedProcedure
     .input(CreateFolderScheme.omit({ userId: true }))
     .mutation(({ input, ctx }) =>
       createFolder({ ...input, userId: ctx.session.user.id }),
     ),
+  getGroupFolders: protectedProcedure
+    .input(GetGroupFoldersSchema.omit({ userId: true }))
+    .query(({ input, ctx }) =>
+      getGroupFolders({ ...input, userId: ctx.session.user.id }),
+    ),
+  getChildren: protectedProcedure
+    .input(GetChildrenSchema.omit({ userId: true }))
+    .query(({ input, ctx }) =>
+      getChildren({ ...input, userId: ctx.session.user.id }),
+    ),
+  //SCHEMA
   createSchema: protectedProcedure
     .input(CreateSchemaSchema.omit({ userId: true }))
     .mutation(({ input, ctx }) =>
@@ -55,21 +71,16 @@ export const filesRouter = createTRPCRouter({
     .query(({ input, ctx }) =>
       getSchemaData({ ...input, userId: ctx.session.user.id }),
     ),
-  getGroupFolders: protectedProcedure
-    .input(GetGroupFoldersSchema.omit({ userId: true }))
-    .query(({ input, ctx }) =>
-      getGroupFolders({ ...input, userId: ctx.session.user.id }),
-    ),
-  getChildren: protectedProcedure
-    .input(GetChildrenSchema.omit({ userId: true }))
-    .query(({ input, ctx }) =>
-      getChildren({ ...input, userId: ctx.session.user.id }),
-    ),
 
   // TextFile
   createTextFile: protectedProcedure
     .input(CreateTextFileSchema.omit({ createdById: true }))
     .mutation(({ input, ctx }) =>
       createTextFile({ ...input, createdById: ctx.session.user.id }),
+    ),
+  getTextFile: protectedProcedure
+    .input(GetTextFileSchema.omit({ userId: true }))
+    .query(({ input, ctx }) =>
+      getTextFile({ ...input, userId: ctx.session.user.id }),
     ),
 });

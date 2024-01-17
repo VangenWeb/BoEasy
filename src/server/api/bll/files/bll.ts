@@ -26,6 +26,8 @@ import {
 import {
   type CreateTextFileInput,
   CreateTextFileSchema,
+  GetTextFileInput,
+  GetTextFileReturn,
 } from "./types/textFile";
 
 export async function createFolder(input: CreateFolderInput) {
@@ -448,5 +450,35 @@ export async function createTextFile(
   return {
     ok: true,
     data: null,
+  };
+}
+
+export async function getTextFile({
+  id,
+  userId,
+}: GetTextFileInput): AndyQuery<GetTextFileReturn> {
+  const file = await prisma.textFile.findUnique({
+    where: {
+      id: id,
+    },
+  });
+
+  if (!file) {
+    throw new TRPCError({
+      code: "BAD_REQUEST",
+      message: "File not found",
+    });
+  }
+
+  const access = await userHasAdminAccess(userId, file.groupId);
+
+  const canEdit = access || file.createdById === userId;
+
+  return {
+    ok: true,
+    data: {
+      ...file,
+      canEdit,
+    },
   };
 }

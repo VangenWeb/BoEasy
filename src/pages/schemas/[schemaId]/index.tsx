@@ -35,7 +35,7 @@ export default function SchemaDataList() {
   const router = useRouter();
 
   const { data, isLoading, isFetching } =
-    api.schema.getSchemaWithSchemaData.useQuery({
+    api.file.getSchemaWithSchemaData.useQuery({
       schemaId: router.query.schemaId as string,
     });
 
