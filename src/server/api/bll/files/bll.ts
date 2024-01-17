@@ -1,5 +1,5 @@
 import {
-  TextFile,
+  type TextFile,
   type Prisma,
   type Schema,
   type SchemaFolder,
@@ -26,8 +26,9 @@ import {
 import {
   type CreateTextFileInput,
   CreateTextFileSchema,
-  GetTextFileInput,
-  GetTextFileReturn,
+  type GetTextFileInput,
+  type GetTextFileReturn,
+  type UpdateTextFileInput,
 } from "./types/textFile";
 
 export async function createFolder(input: CreateFolderInput) {
@@ -480,5 +481,56 @@ export async function getTextFile({
       ...file,
       canEdit,
     },
+  };
+}
+
+export async function updateTextFile({
+  id,
+  userId,
+  content,
+  name,
+}: UpdateTextFileInput) {
+  const file = await prisma.textFile.findUnique({
+    where: {
+      id: id,
+    },
+  });
+
+  if (!file) {
+    throw new TRPCError({
+      code: "BAD_REQUEST",
+      message: "File not found",
+    });
+  }
+
+  const adminAccess = await userHasAdminAccess(userId, file.groupId);
+
+  if (!adminAccess || userId !== file.createdById) {
+    throw new TRPCError({
+      code: "BAD_REQUEST",
+      message: "User does not have access to group",
+    });
+  }
+
+  const updatedFile = await prisma.textFile.update({
+    where: {
+      id: id,
+    },
+    data: {
+      name: name,
+      content: content,
+    },
+  });
+
+  if (!updatedFile) {
+    throw new TRPCError({
+      code: "BAD_REQUEST",
+      message: "File not updated",
+    });
+  }
+
+  return {
+    ok: true,
+    data: null,
   };
 }

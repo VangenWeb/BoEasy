@@ -1,20 +1,31 @@
 import EditIcon from "@mui/icons-material/Edit";
-import { IconButton } from "@mui/material";
-import { Editor } from "@tinymce/tinymce-react";
+import { CircularProgress, IconButton, TextField } from "@mui/material";
+import { type Editor } from "@tinymce/tinymce-react";
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
+import SaveIcon from "@mui/icons-material/Save";
 import { ConfirmDialog } from "~/components";
 import { RichText } from "~/components/Editor/RichText";
 import { RichTextEditor } from "~/components/Editor/RichTextEditor";
 import { getEditorContent } from "~/components/Editor/util";
 import { useDialog } from "~/util/hooks";
 import { api } from "~/utils/api";
+import { useRootSnack } from "~/util/hooks/useSnack";
+import CloseIcon from "@mui/icons-material/Close";
 
 export default function ViewTextFile() {
   const [isEditing, setIsEditing] = useState(false);
+  const [fileName, setFileName] = useState<{
+    saved: string;
+    current: string;
+  }>({
+    saved: "",
+    current: "",
+  });
   const [content, setContent] = useState("");
   const [contentFetched, setContentFetched] = useState(false);
   const editorRef = useRef<Editor | null>(null);
+  const createSnack = useRootSnack();
 
   const router = useRouter();
   const { fileId } = router.query;
@@ -30,9 +41,16 @@ export default function ViewTextFile() {
   useEffect(() => {
     if (!contentFetched && textFile?.ok && textFile?.data?.content) {
       setContent(textFile.data.content);
+      setFileName({
+        saved: textFile.data.name,
+        current: textFile.data.name,
+      });
       setContentFetched(true);
     }
   }, [contentFetched, textFile]);
+
+  const { mutate: mutateTextFile, isLoading: updateTextFileLoading } =
+    api.file.updateTextFile.useMutation();
 
   const [dialogContent, setDialogContent] = useState<JSX.Element | null>(null);
   const {
@@ -43,10 +61,6 @@ export default function ViewTextFile() {
     dialogContent: dialogContent ?? <></>,
   });
 
-  if (!textFile || !textFile.ok) {
-    return <div>loading...</div>;
-  }
-
   function handleStartEditClick() {
     setIsEditing(true);
   }
@@ -56,18 +70,20 @@ export default function ViewTextFile() {
       <ConfirmDialog
         title="Lagre endringer?"
         onConfirm={() => {
-          console.log("Saved Yeppers");
-          setIsEditing(false);
-          handleSave();
+          saveTextFile(() => {
+            setIsEditing(false);
+          });
           closeConfirm();
         }}
         onDecline={() => {
-          console.log("Declined");
           closeConfirm();
           setIsEditing(false);
+          setFileName({
+            saved: fileName.saved,
+            current: fileName.saved,
+          });
         }}
         onCancel={() => {
-          console.log("Cancelled");
           closeConfirm();
         }}
       />,
@@ -75,27 +91,92 @@ export default function ViewTextFile() {
     openConfirm();
   }
 
-  function handleSave() {
+  function saveTextFile(callback?: () => void) {
     const editorContent = getEditorContent(editorRef);
 
-    if (!editorContent) {
+    if (!editorContent || !contentFetched || updateTextFileLoading) {
       return;
     }
+
+    mutateTextFile(
+      {
+        id: fileId as string,
+        content: editorContent,
+        name: fileName.current,
+      },
+      {
+        onSuccess: () => {
+          setContent(editorContent);
+          setFileName({
+            saved: fileName.current,
+            current: fileName.current,
+          });
+          createSnack({
+            message: "Endringer lagret",
+            severity: "success",
+          });
+          if (callback) {
+            callback();
+          }
+        },
+        onError: () => {
+          console.log("Error");
+          closeConfirm();
+          createSnack({
+            message: "Kunne ikke lagre endringer",
+            severity: "error",
+          });
+        },
+      },
+    );
     setContent(editorContent);
+  }
+
+  function handleSaveTextFile() {
+    saveTextFile();
+  }
+
+  if (!textFile || !textFile.ok) {
+    return (
+      <div className="flex flex-1 items-center justify-center">
+        <CircularProgress />
+      </div>
+    );
   }
 
   return (
     <div className="flex flex-1 flex-col">
-      <div></div>
       <div className="flex w-[100%]  flex-row items-center border-b border-solid">
-        {textFile.data.name}
+        {isEditing ? (
+          <TextField
+            value={fileName.current}
+            onChange={(e) =>
+              setFileName({ ...fileName, current: e.target.value })
+            }
+          />
+        ) : (
+          <div className="mr-auto">{fileName.saved}</div>
+        )}
+        {isEditing && (
+          <IconButton
+            disabled={updateTextFileLoading}
+            onClick={handleSaveTextFile}
+            sx={{
+              marginLeft: "auto",
+            }}
+          >
+            {updateTextFileLoading ? (
+              <CircularProgress size="1.5rem" />
+            ) : (
+              <SaveIcon />
+            )}
+          </IconButton>
+        )}
         <IconButton
-          sx={{
-            marginLeft: "auto",
-          }}
+          disabled={updateTextFileLoading}
           onClick={isEditing ? handleStopEditClick : handleStartEditClick}
         >
-          <EditIcon />
+          {isEditing ? <CloseIcon /> : <EditIcon />}
         </IconButton>
       </div>
       {isEditing ? (

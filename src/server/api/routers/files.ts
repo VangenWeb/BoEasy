@@ -25,6 +25,7 @@ import { createTRPCRouter, protectedProcedure } from "../trpc";
 import {
   CreateTextFileSchema,
   GetTextFileSchema,
+  UpdateTextFileSchema,
 } from "../bll/files/types/textFile";
 
 export const filesRouter = createTRPCRouter({
@@ -81,6 +82,11 @@ export const filesRouter = createTRPCRouter({
   getTextFile: protectedProcedure
     .input(GetTextFileSchema.omit({ userId: true }))
     .query(({ input, ctx }) =>
+      getTextFile({ ...input, userId: ctx.session.user.id }),
+    ),
+  updateTextFile: protectedProcedure
+    .input(UpdateTextFileSchema.omit({ userId: true }))
+    .mutation(({ input, ctx }) =>
       getTextFile({ ...input, userId: ctx.session.user.id }),
     ),
 });

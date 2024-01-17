@@ -53,9 +53,9 @@ export default function RichTextDialog() {
   const router = useRouter();
   const group = useContext(CurrentGroupContext);
   const createSnack = useRootSnack();
-  const [dialogContent, setDialogContent] = useState<JSX.Element | null>(null);
   const [fileName, setFileName] = useState<string>("");
 
+  const [dialogContent, setDialogContent] = useState<JSX.Element | null>(null);
   const {
     DialogComponent,
     closeDialog: closeConfirm,
