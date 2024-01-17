@@ -1,14 +1,13 @@
 import styled from "@emotion/styled";
 import CloseIcon from "@mui/icons-material/Close";
 import RestartAltIcon from "@mui/icons-material/RestartAlt";
-import { Button, CircularProgress, TextField, Typography } from "@mui/material";
-import { type Schema } from "@prisma/client";
+import { Button, CircularProgress, Typography } from "@mui/material";
 import { useContext, useEffect, useState } from "react";
 import { IconButton } from "~/components/Button";
 import { ConfirmDialog } from "~/components/Dialog";
+import { FillSchemaContext } from "~/util/context/FillSchemaContext";
 import { useDialog } from "~/util/hooks";
 import { api } from "~/utils/api";
-import { FillSchemaContext } from "~/util/context/FillSchemaContext";
 import { SchemaInputField } from "./components/SchemaInputField";
 
 const Wrapper = styled.div`
@@ -82,7 +81,7 @@ export const FillSchemaDialog: React.FC<FillSchemaDialogProps> = ({
   } = useContext(FillSchemaContext);
 
   const { data: schema, isLoading: schemaLoading } =
-    api.schema.getSchema.useQuery(
+    api.file.getSchema.useQuery(
       {
         schemaId: schemaId,
       },

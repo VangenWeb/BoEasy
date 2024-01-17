@@ -1,7 +1,6 @@
 import styled from "@emotion/styled";
 import { Checkbox, TextField, Typography } from "@mui/material";
-import { useState } from "react";
-import { SchemaDataFieldObject } from "~/server/api/bll/schema/types/schema";
+import { type SchemaDataFieldObject } from "~/server/api/bll/files/types/schema";
 
 interface WrapperProps {
   isCheckbox?: boolean;

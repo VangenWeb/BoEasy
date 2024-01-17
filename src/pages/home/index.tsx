@@ -1,7 +1,10 @@
 import { Button, CircularProgress, Typography } from "@mui/material";
+import { type Editor } from "@tinymce/tinymce-react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
+import { useRef } from "react";
 import { PageWrapper } from "~/components";
+import { RichTextEditor } from "~/components/Editor/RichTextEditor";
 import { potentialErrorHandling } from "~/util/potentialErrorHandling";
 import { api } from "~/utils/api";
 

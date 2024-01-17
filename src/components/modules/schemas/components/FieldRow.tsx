@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { Typography } from "@mui/material";
-import { SchemaDataFieldObject } from "~/server/api/bll/schema/types/schema";
+import { type SchemaDataFieldObject } from "~/server/api/bll/files/types/schema";
 
 const Wrapper = styled.div`
   display: flex;
@@ -23,6 +23,7 @@ export const FieldRow: React.FC<FieldRowProps> = ({ field }) => {
       </Wrapper>
     );
   }
+
   if (field.type === "checkbox") {
     return (
       <Wrapper>

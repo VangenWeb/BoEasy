@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { IconButton } from "@mui/material";
-import { type SchemaDataWithUser } from "~/server/api/bll/schema/types/schema";
+import { type SchemaDataWithUser } from "~/server/api/bll/files/types/schema";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import SettingsApplicationsIcon from "@mui/icons-material/SettingsApplications";
 import Link from "next/link";

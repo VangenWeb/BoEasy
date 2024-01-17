@@ -1,32 +1,51 @@
 import {
   createFolder,
   createSchema,
+  createTextFile,
   getChildren,
   getGroupFolders,
   getSchema,
   getSchemaData,
   getSchemaWithSchemaData,
+  getTextFile,
   upsertSchemaData,
-} from "../bll/schema/bll";
+} from "../bll/files/bll";
 import {
   CreateSchemaSchema,
   GetSchemaDataSchema,
   GetSchemaSchema,
   UpsertSchemaDataSchema,
-} from "../bll/schema/types/schema";
+} from "../bll/files/types/schema";
 import {
   CreateFolderScheme,
   GetChildrenSchema,
   GetGroupFoldersSchema,
-} from "../bll/schema/types/folder";
+} from "../bll/files/types/folder";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
+import {
+  CreateTextFileSchema,
+  GetTextFileSchema,
+  UpdateTextFileSchema,
+} from "../bll/files/types/textFile";
 
-export const schemaRouter = createTRPCRouter({
+export const filesRouter = createTRPCRouter({
+  // FOLDERS
   createFolder: protectedProcedure
     .input(CreateFolderScheme.omit({ userId: true }))
     .mutation(({ input, ctx }) =>
       createFolder({ ...input, userId: ctx.session.user.id }),
     ),
+  getGroupFolders: protectedProcedure
+    .input(GetGroupFoldersSchema.omit({ userId: true }))
+    .query(({ input, ctx }) =>
+      getGroupFolders({ ...input, userId: ctx.session.user.id }),
+    ),
+  getChildren: protectedProcedure
+    .input(GetChildrenSchema.omit({ userId: true }))
+    .query(({ input, ctx }) =>
+      getChildren({ ...input, userId: ctx.session.user.id }),
+    ),
+  //SCHEMA
   createSchema: protectedProcedure
     .input(CreateSchemaSchema.omit({ userId: true }))
     .mutation(({ input, ctx }) =>
@@ -53,14 +72,21 @@ export const schemaRouter = createTRPCRouter({
     .query(({ input, ctx }) =>
       getSchemaData({ ...input, userId: ctx.session.user.id }),
     ),
-  getGroupFolders: protectedProcedure
-    .input(GetGroupFoldersSchema.omit({ userId: true }))
-    .query(({ input, ctx }) =>
-      getGroupFolders({ ...input, userId: ctx.session.user.id }),
+
+  // TextFile
+  createTextFile: protectedProcedure
+    .input(CreateTextFileSchema.omit({ createdById: true }))
+    .mutation(({ input, ctx }) =>
+      createTextFile({ ...input, createdById: ctx.session.user.id }),
     ),
-  getChildren: protectedProcedure
-    .input(GetChildrenSchema.omit({ userId: true }))
+  getTextFile: protectedProcedure
+    .input(GetTextFileSchema.omit({ userId: true }))
     .query(({ input, ctx }) =>
-      getChildren({ ...input, userId: ctx.session.user.id }),
+      getTextFile({ ...input, userId: ctx.session.user.id }),
+    ),
+  updateTextFile: protectedProcedure
+    .input(UpdateTextFileSchema.omit({ userId: true }))
+    .mutation(({ input, ctx }) =>
+      getTextFile({ ...input, userId: ctx.session.user.id }),
     ),
 });

@@ -1,6 +1,6 @@
 // While using SQL lite as the DB I need an enum for the Tasks.periodically field
 export type TaskPeriod = "daily" | "weekly" | "monthly" | "yearly";
-
+//TODO: Error instead of {ok: false, error: string} return
 export type AndyQueryReturn<T> =
   | {
       ok: true;

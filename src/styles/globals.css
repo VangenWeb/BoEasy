@@ -1,3 +1,11 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.tox-notification--warning {
+  display: none !important;
+}
+
+* {
+  min-width: 0;
+}

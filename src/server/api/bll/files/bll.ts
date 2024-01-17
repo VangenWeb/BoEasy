@@ -1,23 +1,35 @@
-import { type Prisma, type Schema, type SchemaFolder } from "@prisma/client";
+import {
+  type TextFile,
+  type Prisma,
+  type Schema,
+  type SchemaFolder,
+} from "@prisma/client";
+import { TRPCError } from "@trpc/server";
 import { prisma } from "~/server/db";
 import { type AndyQuery } from "../types";
 import { userHasAdminAccess } from "../util/userHasAdminAcces";
 import { userHasBasicAccessToGroup } from "../util/userHasBasicAccessToGroup";
 import {
-  type GetSchemaInput,
-  type CreateSchemaSchemaInput,
-  type UpsertSchemaDataInput,
-  SchemaDataSchema,
-  type SchemaWithSchemaData,
-  GetSchemaDataInput,
-  SchemaDataWithUser,
-  GetSchemaDataReturn,
-} from "./types/schema";
-import {
   type CreateFolderInput,
   type GetChildrenInput,
   type GetGroupFoldersInput,
 } from "./types/folder";
+import {
+  SchemaDataSchema,
+  type CreateSchemaSchemaInput,
+  type GetSchemaDataInput,
+  type GetSchemaDataReturn,
+  type GetSchemaInput,
+  type SchemaWithSchemaData,
+  type UpsertSchemaDataInput,
+} from "./types/schema";
+import {
+  type CreateTextFileInput,
+  CreateTextFileSchema,
+  type GetTextFileInput,
+  type GetTextFileReturn,
+  type UpdateTextFileInput,
+} from "./types/textFile";
 
 export async function createFolder(input: CreateFolderInput) {
   if (!(await userHasAdminAccess(input.userId, input.groupId))) {
@@ -116,6 +128,7 @@ export async function getChildren({
 }: GetChildrenInput): AndyQuery<{
   folders: SchemaFolder[];
   schemas: Schema[];
+  files: TextFile[];
 }> {
   if (!(await userHasBasicAccessToGroup(userId, groupId))) {
     return {
@@ -138,11 +151,19 @@ export async function getChildren({
     },
   });
 
+  const files = await prisma.textFile.findMany({
+    where: {
+      groupId: groupId,
+      parentFolderId: parentId,
+    },
+  });
+
   return {
     ok: true,
     data: {
-      folders,
-      schemas,
+      folders: folders ?? [],
+      schemas: schemas ?? [],
+      files: files ?? [],
     },
   };
 }
@@ -387,5 +408,129 @@ export async function getSchemaData({
   return {
     ok: true,
     data: schema,
+  };
+}
+
+export async function createTextFile(
+  textFile: CreateTextFileInput,
+): AndyQuery<null> {
+  const access = await userHasBasicAccessToGroup(
+    textFile.createdById,
+    textFile.groupId,
+  );
+  if (!access) {
+    return { ok: false, error: "User does not have access to group" };
+  }
+
+  const verifiedData = CreateTextFileSchema.safeParse(textFile);
+
+  if (!verifiedData.success) {
+    throw new TRPCError({
+      code: "BAD_REQUEST",
+      message: verifiedData.error.message,
+    }); //return { ok: false, error: verifiedData.error.message };
+  }
+
+  const file = await prisma.textFile.create({
+    data: {
+      name: textFile.name,
+      content: textFile.content,
+      groupId: textFile.groupId,
+      createdById: textFile.createdById,
+      parentFolderId: textFile.parentFolderId,
+    },
+  });
+
+  if (!file) {
+    throw new TRPCError({
+      code: "BAD_REQUEST",
+      message: "File not created",
+    });
+  }
+
+  return {
+    ok: true,
+    data: null,
+  };
+}
+
+export async function getTextFile({
+  id,
+  userId,
+}: GetTextFileInput): AndyQuery<GetTextFileReturn> {
+  const file = await prisma.textFile.findUnique({
+    where: {
+      id: id,
+    },
+  });
+
+  if (!file) {
+    throw new TRPCError({
+      code: "BAD_REQUEST",
+      message: "File not found",
+    });
+  }
+
+  const access = await userHasAdminAccess(userId, file.groupId);
+
+  const canEdit = access || file.createdById === userId;
+
+  return {
+    ok: true,
+    data: {
+      ...file,
+      canEdit,
+    },
+  };
+}
+
+export async function updateTextFile({
+  id,
+  userId,
+  content,
+  name,
+}: UpdateTextFileInput) {
+  const file = await prisma.textFile.findUnique({
+    where: {
+      id: id,
+    },
+  });
+
+  if (!file) {
+    throw new TRPCError({
+      code: "BAD_REQUEST",
+      message: "File not found",
+    });
+  }
+
+  const adminAccess = await userHasAdminAccess(userId, file.groupId);
+
+  if (!adminAccess || userId !== file.createdById) {
+    throw new TRPCError({
+      code: "BAD_REQUEST",
+      message: "User does not have access to group",
+    });
+  }
+
+  const updatedFile = await prisma.textFile.update({
+    where: {
+      id: id,
+    },
+    data: {
+      name: name,
+      content: content,
+    },
+  });
+
+  if (!updatedFile) {
+    throw new TRPCError({
+      code: "BAD_REQUEST",
+      message: "File not updated",
+    });
+  }
+
+  return {
+    ok: true,
+    data: null,
   };
 }

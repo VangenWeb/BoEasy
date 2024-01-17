@@ -31,8 +31,6 @@ const ContentWrapper = styled.div`
 `;
 
 export const Layout: React.CFC<LayoutProps> = ({ children }) => {
-  console.log("Layout Rendered");
-
   const session = useSession();
   const currentGroup = useContext(CurrentGroupContext);
   const router = useRouter();
@@ -41,10 +39,14 @@ export const Layout: React.CFC<LayoutProps> = ({ children }) => {
   // This is done here as I couldn't figure out how to do it in the _app.tsx file without querying.
   // The "session" prop the app file gets is empty, so we can't use that.
   useEffect(() => {
+    if (session.data?.user.primaryGroupId === null) {
+      session.update().catch((err) => console.error(err));
+    }
+
     if (currentGroup.currentGroup === null) {
       currentGroup.setCurrentGroup(session?.data?.user.primaryGroupId ?? null);
     }
-  }, [currentGroup, session?.data?.user.primaryGroupId]);
+  }, [currentGroup, session, session.data?.user.primaryGroupId]);
 
   // Handle unathenticated access to pages
   // Todo: add exceptions for about etc.

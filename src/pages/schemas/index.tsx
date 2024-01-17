@@ -17,6 +17,7 @@ const ActionWrapper = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: flex-end;
+  padding: 0.5rem 0;
   gap: 0.5rem;
 `;
 
@@ -26,7 +27,7 @@ const ActionWrapper = styled.div`
 export default function Schemas() {
   const group = useGroup();
   const { data: children, refetch: refetchFolders } =
-    api.schema.getChildren.useQuery(
+    api.file.getChildren.useQuery(
       {
         groupId: group ?? "",
         parentId: null,
@@ -35,7 +36,8 @@ export default function Schemas() {
         enabled: !!group,
       },
     );
-  const { mutate, isLoading } = api.schema.createFolder.useMutation();
+
+  const { mutate, isLoading } = api.file.createFolder.useMutation();
 
   function handleCreateFolder(parentId: string | null) {
     return () => {
