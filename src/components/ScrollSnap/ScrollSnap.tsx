@@ -92,6 +92,7 @@ export const ScrollSnap: React.FC<ScrollSnapProps> = ({
           scrollToNextSection={handleScrollToNextSection}
           section={section.content}
           lastSection={index === sections.length - 1}
+          firstSection={index === 0}
         />
       ))}
     </div>

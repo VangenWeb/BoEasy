@@ -21,7 +21,7 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>Vange Web</title>
+        <title>BoEasy</title>
         <meta name="description" content="Playground Simple Borettslag App" />
         <link rel="icon" href="/vwulog.ico" />
       </Head>
@@ -34,7 +34,6 @@ export default function Home() {
           className="absolute z-[0] h-[100%] w-[100%] object-cover"
         />
         <ScrollSnap
-          className="background"
           sections={[
             { title: "Login", content: <IndexSection key="index-section" /> },
             {

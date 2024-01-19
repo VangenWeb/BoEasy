@@ -11,11 +11,11 @@ export const RegisterSection: React.FC = () => {
 
   return (
     <div className="bg ml-auto mr-auto flex max-w-[450px] flex-1 flex-col overflow-hidden pb-[80px]">
-      <div className="mb-auto mt-4 px-4 text-center text-2xl text-black drop-shadow-lg text-shadow-text8"></div>
+      <div className="text-shadow-text8 mb-auto mt-4 px-4 text-center text-2xl text-black drop-shadow-lg"></div>
 
       <div
         className={` 
-        relative z-10 mb-[50px] overflow-visible 
+        relative z-10 mb-[50px] mt-4 overflow-visible 
         before:absolute before:bottom-0 before:left-0 before:right-0 before:top-0 before:z-[-1] before:h-[145%] before:w-[200%] before:translate-x-[-30%] before:translate-y-[-22%] before:rotate-[20deg] before:bg-white before:shadow-xl before:content-['']
         `}
       >
